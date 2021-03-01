@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"github.com/docxReporter2/include/gui/autocomplete"
 	"github.com/docxReporter2/include/gui/docx"
 	"github.com/docxReporter2/include/gui/jsonConfig"
 	"github.com/docxReporter2/include/gui/mainComponents"
@@ -11,7 +12,6 @@ import (
 	"github.com/therecipe/qt/widgets"
 	"path/filepath"
 	"strings"
-
 )
 
 const (
@@ -119,6 +119,22 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	editVbox.AddWidget(templateName,0,core.Qt__AlignCenter)
 	inputs = createComboboxFields(editVbox, documentFields)
+
+	fp,_ := filepath.Abs(".")
+	filePath,_ = filepath.Rel(fp,filePath)
+
+	fullname := autocomplete.ReadConfigFor(filePath,"")
+
+	for _,inp := range inputs {
+		for _,n:= range fullname.Usernames {
+			if inp.InputName == n.FieldName {
+				inp.Input.SetCurrentText(n.Value)
+			}
+		}
+
+	}
+
+
 	editVbox.AddWidget(previewButton,0,0)
 	editVbox.AddWidget(saveReportButton,0,0)
 
@@ -126,13 +142,15 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	editVbox.AddWidget(infoConversion,0,core.Qt__AlignCenter)
 
 	mainVbox.AddWidget(editDocWidget,0,0)
-	editDocWidget.SetSizePolicy2(widgets.QSizePolicy__Ignored,widgets.QSizePolicy__Ignored)
+
 
 	scrollArea := widgets.NewQScrollArea(nil)
 	scrollArea.SetWidget(editDocWidget)
 	//scrollArea.SetFixedSize2(500,500)
-	scrollArea.Resize2(200,200)
+
 	scrollArea.SetWidgetResizable(true)
+	//важно сделать так для vertical части, чтобы появлялся скролл бар
+	editDocWidget.SetSizePolicy2(widgets.QSizePolicy__Ignored,widgets.QSizePolicy__Expanding)
 	addEditArea(scrollArea)
 
 	View := createPreviewArea()
@@ -296,6 +314,7 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string)[]mainCompon
 
 		input.Input = comboBox
 		input.InputName = label.Text()
+
 
 
 		inputs = append(inputs,input)
