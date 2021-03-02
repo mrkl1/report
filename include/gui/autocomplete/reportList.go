@@ -2,7 +2,7 @@ package autocomplete
 
 import "encoding/xml"
 
-const configReportList = "config/autoCompleteDB.xml"
+const configReportList = "config/config.xml"
 
 type ReportNameList struct {
 	XMLName xml.Name `xml:"ReportNameList"`

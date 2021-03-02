@@ -265,7 +265,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 		document.ReplaceContent(simpleWords)
 		document.SaveFile(newDocPath)
-
+		autocomplete.SaveLast(inputs,filePath)
 	})
 
 
