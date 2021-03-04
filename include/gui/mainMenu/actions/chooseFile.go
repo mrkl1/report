@@ -111,13 +111,10 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	previewButton.SetFixedHeight(22)
 
 	//добавление на layout компонентов
-	templateName := widgets.NewQLabel2("Сейчас используется шаблон: "+ filepath.Base(filePath),nil,0)
 
-	font := gui.NewQFont()
-	font.SetPointSize(20)
-	templateName.SetFont(font)
+	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
 
-	editVbox.AddWidget(templateName,0,core.Qt__AlignCenter)
+
 	inputs = createComboboxFields(editVbox, documentFields)
 
 	fp,_ := filepath.Abs(".")
@@ -154,6 +151,8 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	addEditArea(scrollArea)
 
 	View := createPreviewArea()
+
+
 
 	previewButton.ConnectClicked(func(bool){
 		document,_ := docx.ReadDocxText(filePath)
@@ -334,11 +333,6 @@ func addEditArea(widget widgets.QWidget_ITF){
 	//centralGridLayout.AddWidget2(wrappedWidget,0,
 	//	centralLayoutRow,core.Qt__AlignLeft)
 	//centralLayoutRow++
-
-
-
-
-
 }
 
 //https://github.com/piaobocpp/doc2pdf-go
@@ -349,19 +343,93 @@ func createPreviewArea()*widgets.QGraphicsView{
 		Item      *widgets.QGraphicsPixmapItem
 	)
 	Scene = widgets.NewQGraphicsScene(nil)
+
+
+
 	View = widgets.NewQGraphicsView(nil)
 	img := gui.NewQImage()
-	img.Load(startPreviewImage,"")
+	img.Load(startPreviewImage,"png")
 	Item = widgets.NewQGraphicsPixmapItem2(gui.NewQPixmap().FromImage(img, 0), nil)
+
+	drag := gui.NewQCursor2(core.Qt__DragMoveCursor)
+
+
+
+	View.SetCursor(drag)
+
 	Scene.AddItem(Item)
+
+	//var b gui.QBrush_ITF
+	//b.QBrush_PTR().
+	//Scene.SetBackgroundBrush()
 	View.SetScene(Scene)
-	//View.Scale(0.55,0.55)
+	//View.SetViewportMargins(10, 10, 10, 10)
+	View.SetStyleSheet("border: 4px solid #BEBEBE;")
+	View.SetStyleSheet("background: transparent")
+
+	View.ConnectWheelEvent(func (e *gui.QWheelEvent) {
+		if e.Modifiers() == core.Qt__ControlModifier {
+			if e.AngleDelta().Y()  > 0 {
+				View.Scale(1.1, 1.1)
+			} else {
+				View.Scale(0.9, 0.9)
+			}
+			//https://stackoverflow.com/questions/38234021/horizontal-scroll-on-wheelevent-with-shift-too-fast
+		} else if e.Modifiers() == core.Qt__ShiftModifier {
+
+			curPos := View.HorizontalScrollBar().Value()
+
+			if e.AngleDelta().X()  > 0 {
+				View.HorizontalScrollBar().SetValue(curPos+e.AngleDelta().Y())
+			} else {
+				View.HorizontalScrollBar().SetValue(curPos-e.AngleDelta().Y())
+			}
+
+
+		} else {
+			View.WheelEventDefault(e)
+		}
+	})
+
+	View.SetMouseTracking(false)
+//https://stackoverflow.com/questions/25224486/qt-mousemoveevent-only-triggers-with-a-mouse-button-press
+
+
+	var prevEvX = 0
+	var prevEvY = 0
+	View.ConnectMouseMoveEvent(func(event *gui.QMouseEvent) {
+
+		curPosV := View.VerticalScrollBar().Value()
+		curPosH := View.HorizontalScrollBar().Value()
+
+
+
+		fmt.Println("Event = ",event.Y(),prevEvY)
+		if  event.Y() - prevEvY > 0 && event.Y() < View.Height() {
+			View.VerticalScrollBar().SetValue(curPosV - 10)
+		}  else if event.Y() - prevEvY < 0 && event.Y() < View.Height(){
+			View.VerticalScrollBar().SetValue(curPosV + 10)
+		}
+
+		if event.X()  - prevEvX   > 0 && event.X() < View.Width() {
+			View.HorizontalScrollBar().SetValue(curPosH - 5)
+		} else if event.X()  - prevEvX   < 0 && event.X() < View.Width() {
+			View.HorizontalScrollBar().SetValue(curPosH + 5)
+		}
+
+		prevEvY = event.Y()
+		prevEvX = event.X()
+
+		//View.HorizontalScrollBar().SetValue(curPosH + (event.X() - curPosH))
+
+		//reverse normal
+
+	})
 	//View.SetMaximumWidth(1200)
-	View.SetAlignment(core.Qt__AlignCenter)
+	//View.SetAlignment(core.Qt__AlignCenter)
 	addEditArea(View)
 	return View
 }
-
 
 func updatePreview()*widgets.QGraphicsScene {
 	var	Scene     *widgets.QGraphicsScene
@@ -371,8 +439,14 @@ func updatePreview()*widgets.QGraphicsScene {
 	img.Load(previewImageForReport,"")
 	Item = widgets.NewQGraphicsPixmapItem2(gui.NewQPixmap().FromImage(img, 0), nil)
 	Scene.AddItem(Item)
+
+
+
 	return Scene
 }
+
+
+
 
 func changeSimpleWords(tf jsonConfig.TemplateFields,inputText string)string{
 	word :=	jsonConfig.GetNameWithCase(tf.Category,inputText,tf.CaseType)

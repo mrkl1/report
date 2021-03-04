@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gen2brain/go-fitz"
 	gim "github.com/ozankasikci/go-image-merge"
+	"image/color"
 	"image/jpeg"
 	"image/png"
 	"io/ioutil"
@@ -100,9 +101,14 @@ func mergeJPG(jpgImagesPath []string,outputFile string){
 	var grids []*gim.Grid
 	for _,imagePath := range jpgImagesPath {
 		var g = new(gim.Grid)
+
+		g.BackgroundColor = color.RGBA{R: 0x8b, G: 0xd0, B: 0xc6}
 		g.ImageFilePath = imagePath
+
 		grids = append(grids, g)
 	}
+
+
 
 	rgba,_ := gim.New(grids,1,len(jpgImagesPath)).Merge()
 	file, err := os.Create(outputFile)
@@ -131,7 +137,7 @@ var newPaths []string
 		log.Fatal(err)
 	}
 	file.Close()
-	m := resize.Resize(1000, 0, img, resize.Lanczos3)
+	m := resize.Resize(1280, 700, img, resize.Lanczos3)
 	out, err := os.Create(newImagePath)
 	if err != nil {
 		log.Fatal(err)
