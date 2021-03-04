@@ -86,7 +86,7 @@ func pdfToJpg(filename string) []string {
 			panic(err)
 		}
 
-		err = jpeg.Encode(f, img, &jpeg.Options{jpeg.DefaultQuality})
+		err = jpeg.Encode(f, img, &jpeg.Options{100})
 		if err != nil {
 			panic(err)
 		}
@@ -137,7 +137,7 @@ var newPaths []string
 		log.Fatal(err)
 	}
 	file.Close()
-	m := resize.Resize(1280, 700, img, resize.Lanczos3)
+	m := resize.Resize(1080, 720, img, resize.Lanczos3)
 	out, err := os.Create(newImagePath)
 	if err != nil {
 		log.Fatal(err)
