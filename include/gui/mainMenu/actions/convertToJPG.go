@@ -23,6 +23,7 @@ func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponent
 
 	err := cmd.Run()
 	if err != nil {
+		ac.IsConvProcess = true
 		stopConversion <- "false"
 	}
 	//сигнал о завершении выполнения команды
