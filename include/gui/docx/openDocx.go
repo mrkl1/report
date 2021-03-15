@@ -187,9 +187,6 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,wordForReplace stri
 
 			wordForReplace = jsonConfig.ChangeLetterCase(wordForReplace,tf.ChangeLetterCase)
 
-			//wordForReplace = jsonConfig.CutField(wordForReplace,replaceMode)
-			//fmt.Println("world TEXT:",fieldForReplace)
-			//fmt.Println("world  par:",paragraphText)
 			nc := strings.Replace(string(d.AllContent),p.word,
 				ReplaceParagraph(p.word,wordForReplace),1)
 			d.AllContent = []byte(nc)
@@ -456,7 +453,9 @@ func (d *DocxDoc)findWTcontent() []wordInd {
 					continue
 				}
 				if indO > indC && (indC == -1) {
+
 					ws = append(ws,newW("{",start+indO+i,start+indO+i+1))
+
 					ws = append(ws,newW(word[i:indO],start+indO-i,start+indO))
 					i += indO + 1
 					continue
