@@ -155,6 +155,24 @@ func GetNameWithCase(category ,name, caseForm string)string{
 	return name
 }
 
+func GetAllCaseName(nominativeName,category string)[]string {
+	entr := getCategoryEntries(category)
+
+	for _, e := range entr {
+		if e.NominativeCase == nominativeName {
+			return []string{
+				e.NominativeCase,
+				e.Genitive,
+				e.Dative,
+				e.Accusative,
+ 				e.Instrumental,
+				e.Prepositional,
+			}
+		}
+	}
+	return nil
+}
+
 
 //func DeleteEntryFromConfig(entryForDelete CatalogEntry)error{
 //	configs,err := readFromConfig()

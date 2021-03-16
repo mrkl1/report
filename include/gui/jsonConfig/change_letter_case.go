@@ -1,6 +1,12 @@
 package jsonConfig
 
 import (
+	"encoding/json"
+	"fmt"
+	"github.com/docxReporter2/include/gui/spaceSeparator"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"strings"
 	"unicode"
 )
@@ -19,6 +25,55 @@ import (
 
 мб переписать на C#&&&
  */
+
+
+type abbrevC struct {
+	Pos string      // название должности
+	Scheme []int    // схема переноса строк
+	Category string
+}
+var abbrConfig = filepath.Join("config","abbrСonfig.json")
+
+func getAbbrevConfig()[]abbrevC{
+	configFile,err := os.OpenFile(abbrConfig,os.O_RDWR | os.O_APPEND,0644)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	defer configFile.Close()
+
+	configContent,err := ioutil.ReadAll(configFile)
+	if err != nil {
+		return nil
+	}
+
+	var cfg []abbrevC
+	//при возникновении такой ошибки нужно будет выставлять стандартный конфиг
+	err = json.Unmarshal(configContent,&cfg)
+
+
+	return cfg
+}
+
+
+var mapForAbrReplace map[string][]int
+
+
+
+func init(){
+	mapForAbrReplace = make(map[string][]int,1)
+	for _,p := range getAbbrevConfig(){
+		addToMap(GetAllCaseName(p.Pos,p.Category),p.Scheme)
+	}
+}
+
+func addToMap(strSlice []string,schema []int){
+
+	for _,str := range strSlice {
+		mapForAbrReplace[str] = schema
+	}
+}
+
 
 type TemplateFields struct {
 	Category         string
@@ -44,9 +99,6 @@ func NewTemplateFields(fields string)TemplateFields{
 	tf.ChangeLetterCase = splitField[5]
 	tf.ChangeShortForm = splitField[6]
 
-
-
-
 	return tf
 }
 
@@ -71,12 +123,28 @@ func CutField(field, replaceMode string)string{
 func ChangeAbbreviation(word,flag string)string{
 	var changeMap = make(map[string]string,0)
 	changeMap["НИИИ"]= "научно-исследовательского испытательного института"
-	changeMap["НИГ"]= "научно-исследовательской группы"
-	changeMap["НИЛ"]= "научно-исследовательской лаборатории"
+	//changeMap["НИГ"]= "научно-исследовательской группы"
+	//changeMap["НИЛ"]= "научно-исследовательской лаборатории"
 	if flag == "1"{
-		word = strings.Replace(word,"НИИИ",changeMap["НИИИ"],1)
-		word = strings.Replace(word,"НИГ",changeMap["НИГ"],1)
-		word = strings.Replace(word,"НИЛ",changeMap["НИЛ"],1)
+		fmt.Println("+",word)
+		scheme,ok := mapForAbrReplace[word]
+		if ok {
+			word = strings.Replace(word,"НИИИ",changeMap["НИИИ"],1)
+			word = strings.Replace(word,spaceSeparator.SpaceSeparatorSymb," ",-1)
+			fields := strings.Fields(word)
+			var newWord string
+			var curIndex int
+			for _,sch := range scheme {
+				newWord += strings.Join(fields[curIndex:curIndex+sch]," ")+spaceSeparator.SpaceSeparatorSymb
+				curIndex += sch
+			}
+			return newWord
+		}
+
+
+
+		//word = strings.Replace(word,"НИГ",changeMap["НИГ"],1)
+		//word = strings.Replace(word,"НИЛ",changeMap["НИЛ"],1)
 	}
 
 	return word
