@@ -180,11 +180,11 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 			for _,input := range inputs{
 				if input.InputName == tf.FieldName{
 					if tf.ParagrMode == "0"{
-						document.ReplaceWPfield(tf,input.Input.CurrentText())
+						document.ReplaceWPfield(tf,input)
 						continue
 					}
 					if tf.ParagrMode == "1" {
-						simpleWords = append(simpleWords,changeSimpleWords(tf,input.Input.CurrentText()))
+						simpleWords = append(simpleWords,changeSimpleWords(tf,input))
 						continue
 					}
 				}
@@ -251,11 +251,11 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 			for _,input := range inputs{
 				if input.InputName == tf.FieldName{
 					if tf.ParagrMode == "0"{
-						document.ReplaceWPfield(tf,input.Input.CurrentText())
+						document.ReplaceWPfield(tf,input)
 						continue
 					}
 					if tf.ParagrMode == "1" {
-						simpleWords = append(simpleWords,changeSimpleWords(tf,input.Input.CurrentText()))
+						simpleWords = append(simpleWords,changeSimpleWords(tf,input))
 						continue
 					}
 				}
@@ -311,10 +311,19 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string)[]mainCompon
 		vbox.AddWidget(label,0,0)
 		vbox.AddWidget(comboBox, 0, 0)
 
+		var rb mainComponents.RadioStruct
+		var area *widgets.QWidget
+
+		if splitFields[0]=="Должности"{
+			area,rb = spoiler()
+			vbox.AddWidget(area, 0, 0)
+		}
+
+
 		input.Input = comboBox
 		input.InputName = label.Text()
-
-
+		input.PositionType = rb
+		fmt.Println(rb,rb.IsNil())
 
 		inputs = append(inputs,input)
 
@@ -448,8 +457,8 @@ func updatePreview()*widgets.QGraphicsScene {
 
 
 
-func changeSimpleWords(tf jsonConfig.TemplateFields,inputText string)string{
-	word :=	jsonConfig.GetNameWithCase(tf.Category,inputText,tf.CaseType)
+func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.InputsComponent)string{
+	word :=	jsonConfig.GetNameWithCase(tf.Category,inputText.Input.CurrentText(),tf.CaseType)
 	word = jsonConfig.CutField(word,tf.ShortMode)
 	word = jsonConfig.ChangeAbbreviation(word,tf.ChangeShortForm)
 	word = jsonConfig.ChangeLetterCase(word,tf.ChangeLetterCase)

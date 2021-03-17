@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/docxReporter2/include/gui/jsonConfig"
+	"github.com/docxReporter2/include/gui/mainComponents"
 	"github.com/docxReporter2/include/gui/spaceSeparator"
 	"io"
 	"io/ioutil"
@@ -172,14 +173,19 @@ func (d *DocxDoc)extractTextFromSymbols() []string {
 	}
 }
 
-func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,wordForReplace string){
+func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponents.InputsComponent){
 	paragraphs := d.FindWPcontent()
+	wordForReplace := input.Input.CurrentText()
 	//category,caseType,field,           shortForm,  input.Input.CurrentText()
 	//category,caseForm,fieldForReplace,replaceMode, wordForReplace
 	for _,p := range paragraphs {
 		paragraphText := ExtractTextFromContent(p.word)
 
 		if strings.Contains(paragraphText,tf.TemplateName){
+
+			if !input.PositionType.IsNil() {
+				fmt.Println(input.PositionType.GetChosenVariant())
+			}
 
 			wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
 

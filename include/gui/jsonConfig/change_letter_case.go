@@ -126,7 +126,6 @@ func ChangeAbbreviation(word,flag string)string{
 	//changeMap["НИГ"]= "научно-исследовательской группы"
 	//changeMap["НИЛ"]= "научно-исследовательской лаборатории"
 	if flag == "1"{
-		fmt.Println("+",word)
 		scheme,ok := mapForAbrReplace[word]
 		if ok {
 			word = strings.Replace(word,"НИИИ",changeMap["НИИИ"],1)
