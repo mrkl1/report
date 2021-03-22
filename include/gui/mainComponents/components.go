@@ -14,6 +14,8 @@ type AppComponents struct {
 }
 
 
+
+
 type InputsComponent struct {
 	Input 			*widgets.QComboBox
 	InputName   	string
@@ -60,6 +62,7 @@ func NewAppComponents()*AppComponents{
 		//ConvertingInfo: nil,
 	}
 }
+
 
 
 

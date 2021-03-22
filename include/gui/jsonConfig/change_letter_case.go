@@ -115,6 +115,8 @@ func CutField(field, replaceMode string)string{
 			return getFIOInitials(field,false)
 		case "3":
 			return cutRank(field)
+
+
 	}
 
 	return field

@@ -76,11 +76,16 @@ func createDocumentForm(ac *mainComponents.AppComponents,filepath string){
 
 	splitter = widgets.NewQSplitter(nil)
 
+
+
 	mainVbox.AddWidget(splitter,0,0)
 	centralWidget.SetLayout(mainVbox)
 	ac.MainWindow.SetCentralWidget(centralWidget)
 
 	ac.Inputs = createNewEditArea(filepath,ac)
+
+
+
 
 }
 
@@ -114,8 +119,8 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
 
-
-	inputs = createComboboxFields(editVbox, documentFields)
+	scrollArea := widgets.NewQScrollArea(nil)
+	inputs = createComboboxFields(editVbox, documentFields,scrollArea)
 
 	fp,_ := filepath.Abs(".")
 	filePath,_ = filepath.Rel(fp,filePath)
@@ -141,8 +146,13 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	mainVbox.AddWidget(editDocWidget,0,0)
 
 
-	scrollArea := widgets.NewQScrollArea(nil)
+
 	scrollArea.SetWidget(editDocWidget)
+
+
+
+
+
 	//scrollArea.SetFixedSize2(500,500)
 
 	scrollArea.SetWidgetResizable(true)
@@ -273,11 +283,12 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 /*
 
  */
-func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string)[]mainComponents.InputsComponent{
+func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *widgets.QScrollArea )[]mainComponents.InputsComponent{
 	var existingNames []string
 	var inputs []mainComponents.InputsComponent
 	font := gui.NewQFont()
 	font.SetPointSize(11)
+
 
 	startOfCycle:
 	for i := 0;i < len(fields);i++{
@@ -296,25 +307,28 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string)[]mainCompon
 
 		label := widgets.NewQLabel2(splitFields[3],nil,0)
     	var input mainComponents.InputsComponent
-		comboBox := widgets.NewQComboBox(nil)
-		comboBox.SetFont(font)
-		comboBox.SetEditable(true)
-		comboBox.Completer().SetCompletionMode(widgets.QCompleter__PopupCompletion)
-		comboBox.SetEditFocus(true)
-		entries := jsonConfig.GetCategoryNominativeNames(splitFields[0])
-		comboBox.AddItems(entries)
-		comboBox.SetSizeAdjustPolicy(widgets.QComboBox__AdjustToMinimumContentsLength)
-		comboBox.SetCurrentText("")
-		comboBox.SetFixedHeight(22)
+		var comboBox *widgets.QComboBox
+		var rb mainComponents.RadioStruct
+		var area *widgets.QWidget
 
+		if splitFields[0]==jsonConfig.DateCategoryName{
+			comboBox = newDateCombobox(scrollArea)
+		} else {
+			comboBox = widgets.NewQComboBox(nil)
+			comboBox.SetFont(font)
+			comboBox.SetEditable(true)
+			comboBox.Completer().SetCompletionMode(widgets.QCompleter__PopupCompletion)
+			comboBox.SetEditFocus(true)
+			comboBox.AddItems(jsonConfig.GetCategoryNominativeNames(splitFields[0]))
+			comboBox.SetSizeAdjustPolicy(widgets.QComboBox__AdjustToMinimumContentsLength)
+			comboBox.SetCurrentText("")
+			comboBox.SetFixedHeight(22)
+		}
 
 		vbox.AddWidget(label,0,0)
 		vbox.AddWidget(comboBox, 0, 0)
 
-		var rb mainComponents.RadioStruct
-		var area *widgets.QWidget
-
-		if splitFields[0]=="Должности"{
+		if splitFields[0]==jsonConfig.PositionCategoryName{
 			area,rb = spoiler()
 			vbox.AddWidget(area, 0, 0)
 		}
@@ -323,7 +337,7 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string)[]mainCompon
 		input.Input = comboBox
 		input.InputName = label.Text()
 		input.PositionType = rb
-		fmt.Println(rb,rb.IsNil())
+		//fmt.Println(rb,rb.IsNil())
 
 		inputs = append(inputs,input)
 
@@ -458,6 +472,18 @@ func updatePreview()*widgets.QGraphicsScene {
 
 
 func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.InputsComponent)string{
+
+	if tf.Category == jsonConfig.DateCategoryName {
+		fmt.Println(inputText)
+		word := inputText.Input.CurrentText()
+		if tf.ShortMode == "1" {
+			splWord := strings.Fields(word)
+			word = strings.Join(splWord[1:]," ")
+		}
+		return word
+	}
+
+
 	word :=	jsonConfig.GetNameWithCase(tf.Category,inputText.Input.CurrentText(),tf.CaseType)
 	word = jsonConfig.CutField(word,tf.ShortMode)
 	word = jsonConfig.ChangeAbbreviation(word,tf.ChangeShortForm)

@@ -12,3 +12,10 @@ func main() {
 //https://www.pdftron.com/documentation/cli/guides/pdf2word/
 //https://superuser.com/questions/393118/how-to-convert-word-doc-to-pdf-from-windows-command-line
 //http://www.a-pdf.com/office-to-pdf/index.htm
+
+/*
+Откат на 15.8
+https://askubuntu.com/questions/312163/path-variable-gets-always-reset-how-to-fix-that
+https://golang.org/doc/install
+https://habr.com/ru/post/249545/
+ */

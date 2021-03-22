@@ -184,7 +184,7 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 		if strings.Contains(paragraphText,tf.TemplateName){
 
 			if !input.PositionType.IsNil() {
-				fmt.Println(input.PositionType.GetChosenVariant())
+				//fmt.Println(input.PositionType.GetChosenVariant())
 			}
 
 			wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)

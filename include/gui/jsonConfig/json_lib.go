@@ -36,6 +36,7 @@ const (
 	FioCategoryName  = "ФИО"
 	RankCategoryName = "Звания"
 	PositionCategoryName = "Должности"
+	DateCategoryName = "Дата"
 
 	)
 
@@ -70,7 +71,7 @@ func GetMonthsListInGenitiveCase() []string {
 }
 
 func GetCategoryList()[]string{
-	return []string{FioCategoryName, RankCategoryName,PositionCategoryName}
+	return []string{FioCategoryName, RankCategoryName,PositionCategoryName,DateCategoryName}
 }
 
 func categoryIsLegal(categoryName string)bool{

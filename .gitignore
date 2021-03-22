@@ -6,7 +6,9 @@ include*.zip
 .idea
 previewDocx
 moc*
-
-
+docxToJPG
+docxReporter2
+qtdeploy
+fieldList.md
 
 

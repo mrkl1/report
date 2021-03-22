@@ -3,6 +3,7 @@ package gui
 import (
 	"github.com/docxReporter2/include/gui/mainComponents"
 	"github.com/docxReporter2/include/gui/mainMenu"
+	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
 	"os"
@@ -10,6 +11,8 @@ import (
 const (
 	mainWindowName = "reporter 2"
 )
+
+
 
 func newUI()*mainComponents.AppComponents{
 	ac := mainComponents.NewAppComponents()
@@ -24,6 +27,26 @@ func StartUI(){
 	ac := newUI()
 	mainMenu.NewMainMenu(ac)
 	ac.MainWindow.Show()
+
+	maxGeom := ac.Application.Desktop().ScreenGeometry(ac.Application.Desktop().ScreenNumber2(ac.MainWindow.Pos()))
+
+	mainComponents.SetMaxScreenGeometry(maxGeom.Height(),maxGeom.Width())
+	mainComponents.SetCurrentPosition(ac.MainWindow.Pos().X(),ac.MainWindow.Pos().Y())
+	mainComponents.SetCurrentSize(ac.MainWindow.Width(),ac.MainWindow.Height())
+
+	ac.MainWindow.ConnectResizeEvent(func(event *gui.QResizeEvent){
+		mainComponents.SetCurrentSize(ac.MainWindow.Width(),ac.MainWindow.Height())
+	})
+
+	filter := core.NewQObject(nil)
+	filter.ConnectEventFilter(func(watched *core.QObject, event *core.QEvent) bool {
+		if event.Type() == core.QEvent__Move {
+			mainComponents.SetCurrentPosition(ac.MainWindow.Pos().X(),ac.MainWindow.Pos().Y())
+		}
+		return filter.EventFilterDefault(watched, event)
+	})
+	ac.MainWindow.InstallEventFilter(filter)
+
 	ac.Application.Exec()
 }
 

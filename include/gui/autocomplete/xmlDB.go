@@ -4,9 +4,10 @@ import (
 	"encoding/xml"
 	"github.com/docxReporter2/include/gui/mainComponents"
 	"io/ioutil"
+	"path/filepath"
 )
 
-const configAutocompleteDB = "config/autoCompleteDB.xml"
+var configAutocompleteDB = filepath.Join("config","autoCompleteDB.xml")
 
 type Root struct {
 	XMLName       xml.Name      `xml:"root"`
@@ -94,18 +95,4 @@ func newReport(inputs []mainComponents.InputsComponent)FullName{
 	rep.Usernames = usnms
 	return rep
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
