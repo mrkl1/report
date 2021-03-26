@@ -174,6 +174,9 @@ func (d *DocxDoc)extractTextFromSymbols() []string {
 }
 
 func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponents.InputsComponent){
+
+
+
 	paragraphs := d.FindWPcontent()
 	wordForReplace := input.Input.CurrentText()
 	//category,caseType,field,           shortForm,  input.Input.CurrentText()
@@ -182,16 +185,27 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 		paragraphText := ExtractTextFromContent(p.word)
 
 		if strings.Contains(paragraphText,tf.TemplateName){
-
 			if !input.PositionType.IsNil() {
-				//fmt.Println(input.PositionType.GetChosenVariant())
+				if input.PositionType.GetChosenVariant() !=  "Default" {
+					var vrType string
+					tf.CaseType,vrType = input.PositionType.GetCorrectCase(tf.CaseType)
+					wordForReplace = prepareForReplace(tf,wordForReplace)
+					wordForReplace = jsonConfig.FirstToLower(wordForReplace)
+					//Временно исполняющий обязанности
+					//по вакантной воинской должности
+
+					wordForReplace = jsonConfig.GetFullName(input.PositionType.GetChosenVariant(),vrType)+wordForReplace
+
+					nc := strings.Replace(string(d.AllContent),p.word,
+						ReplaceParagraph(p.word,wordForReplace),1)
+					d.AllContent = []byte(nc)
+
+					return
+
+				}
 			}
 
-			wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
-
-			wordForReplace = jsonConfig.ChangeAbbreviation(wordForReplace,tf.ChangeShortForm)
-
-			wordForReplace = jsonConfig.ChangeLetterCase(wordForReplace,tf.ChangeLetterCase)
+			wordForReplace = prepareForReplace(tf,wordForReplace)
 
 			nc := strings.Replace(string(d.AllContent),p.word,
 				ReplaceParagraph(p.word,wordForReplace),1)
@@ -200,6 +214,14 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 
 	}
 }
+
+func prepareForReplace(tf jsonConfig.TemplateFields,wordForReplace string)string{
+	wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
+	wordForReplace = jsonConfig.ChangeAbbreviation(wordForReplace,tf.ChangeShortForm)
+	wordForReplace = jsonConfig.ChangeLetterCase(wordForReplace,tf.ChangeLetterCase)
+	return wordForReplace
+}
+
 
 func (d *DocxDoc)ReplaceSimpleField(category,caseForm,fieldForReplace,wordForReplace string){
 	paragraphs := d.FindWPcontent()

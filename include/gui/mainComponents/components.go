@@ -39,10 +39,8 @@ func (r *RadioStruct)IsNil() bool{
 
 func (r *RadioStruct) GetChosenVariant() string{
 
-
-
 	if r.DefaultName.IsChecked(){
-		return "Def"
+		return "Default"
 	} else if r.Vrio.IsChecked(){
 		return "Vrio"
 	}else if r.Vrid.IsChecked() {
@@ -50,6 +48,23 @@ func (r *RadioStruct) GetChosenVariant() string{
 	}
 
 	return "unknown"
+}
+
+func (r *RadioStruct) GetCorrectCase(curCase string)(caseTForPos,caseTForVr string){
+	choosenVar := r.GetChosenVariant()
+
+	switch  {
+	case choosenVar == "Vrid":
+
+		//можно сделать через мапу, но наверное уже нужна БД
+		if curCase == "ИП" {
+			return "РП",curCase
+		}
+		if curCase == "ДП" {
+			return "РП",curCase
+		}
+	}
+	return curCase,curCase
 }
 
 

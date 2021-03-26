@@ -168,12 +168,13 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		document,_ := docx.ReadDocxText(filePath)
 		newDocPath := tempDocxForPreview
 
-		for _,input := range inputs{
-			if input.Input.CurrentText() == ""{
-				widgets.QMessageBox_About(nil,"Warning","Заполните все поля")
-				return
+		for _,input := range inputs {
+			if input.Input.CurrentText() == "" {
+				widgets.QMessageBox_About(nil, "Warning", "Заполните все поля")
 			}
 		}
+
+
 
 
 		var simpleWords []string
@@ -337,7 +338,7 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 		input.Input = comboBox
 		input.InputName = label.Text()
 		input.PositionType = rb
-		//fmt.Println(rb,rb.IsNil())
+
 
 		inputs = append(inputs,input)
 
@@ -474,7 +475,7 @@ func updatePreview()*widgets.QGraphicsScene {
 func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.InputsComponent)string{
 
 	if tf.Category == jsonConfig.DateCategoryName {
-		fmt.Println(inputText)
+
 		word := inputText.Input.CurrentText()
 		if tf.ShortMode == "1" {
 			splWord := strings.Fields(word)
