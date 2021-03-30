@@ -31,6 +31,8 @@ type Username struct {
 	Value string `xml:",chardata"`
 }
 
+//По умолчанию возвращает последний рапорт
+//
 func ReadConfigFor(reportName,fullName string)FullName{
 	r := &Root{}
 	b,_ := ioutil.ReadFile(configAutocompleteDB)

@@ -171,6 +171,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		for _,input := range inputs {
 			if input.Input.CurrentText() == "" {
 				widgets.QMessageBox_About(nil, "Warning", "Заполните все поля")
+				return
 			}
 		}
 

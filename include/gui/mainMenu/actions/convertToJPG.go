@@ -4,7 +4,6 @@ import (
 	"github.com/docxReporter2/include/gui/mainComponents"
 	"github.com/therecipe/qt/widgets"
 	"os/exec"
-	"runtime"
 	"strings"
 	"time"
 )
@@ -15,11 +14,8 @@ func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponent
 		previewImageForReport,  //  файл на выходе (png)
 	}
 	var cmd *exec.Cmd
-	if runtime.GOOS == "windows"{
-		cmd = exec.Command(executableForConvertingWindows, args...)
-	} else if runtime.GOOS == "linux"{
-		cmd = exec.Command(executableForConvertingLinux, args...)
-	}
+
+	cmd = getCommand(args...)
 
 	err := cmd.Run()
 	if err != nil {

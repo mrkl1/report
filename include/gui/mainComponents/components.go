@@ -54,7 +54,7 @@ func (r *RadioStruct) GetCorrectCase(curCase string)(caseTForPos,caseTForVr stri
 	choosenVar := r.GetChosenVariant()
 
 	switch  {
-	case choosenVar == "Vrid":
+	case choosenVar == "Vrid" || choosenVar == "Vrio":
 
 		//можно сделать через мапу, но наверное уже нужна БД
 		if curCase == "ИП" {

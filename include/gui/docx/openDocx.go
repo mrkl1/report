@@ -191,8 +191,6 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 					tf.CaseType,vrType = input.PositionType.GetCorrectCase(tf.CaseType)
 					wordForReplace = prepareForReplace(tf,wordForReplace)
 					wordForReplace = jsonConfig.FirstToLower(wordForReplace)
-					//Временно исполняющий обязанности
-					//по вакантной воинской должности
 
 					wordForReplace = jsonConfig.GetFullName(input.PositionType.GetChosenVariant(),vrType)+wordForReplace
 
