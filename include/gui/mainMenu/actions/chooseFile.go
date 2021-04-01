@@ -76,17 +76,11 @@ func createDocumentForm(ac *mainComponents.AppComponents,filepath string){
 
 	splitter = widgets.NewQSplitter(nil)
 
-
-
 	mainVbox.AddWidget(splitter,0,0)
 	centralWidget.SetLayout(mainVbox)
 	ac.MainWindow.SetCentralWidget(centralWidget)
 
 	ac.Inputs = createNewEditArea(filepath,ac)
-
-
-
-
 }
 
 //тут создаются
@@ -95,7 +89,6 @@ func createDocumentForm(ac *mainComponents.AppComponents,filepath string){
 //задаются события для этих кнопок
 func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainComponents.InputsComponent{
 	//создание именного поля
-
 
 	var inputs []mainComponents.InputsComponent
 	document,err := docx.ReadDocxText(filePath)
@@ -115,10 +108,8 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	saveReportButton.SetFixedHeight(22)
 	previewButton.SetFixedHeight(22)
 
-	//добавление на layout компонентов
 
 	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
-
 	scrollArea := widgets.NewQScrollArea(nil)
 	inputs = createComboboxFields(editVbox, documentFields,scrollArea)
 
@@ -133,7 +124,6 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 				inp.Input.SetCurrentText(n.Value)
 			}
 		}
-
 	}
 
 
@@ -148,12 +138,6 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 
 	scrollArea.SetWidget(editDocWidget)
-
-
-
-
-
-	//scrollArea.SetFixedSize2(500,500)
 
 	scrollArea.SetWidgetResizable(true)
 	//важно сделать так для vertical части, чтобы появлялся скролл бар
@@ -174,8 +158,6 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 				return
 			}
 		}
-
-
 
 
 		var simpleWords []string
@@ -207,7 +189,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		document.SaveFile(newDocPath)
 
 	//TODO
-	// -заюлокировать кнопки
+	// -заблокировать кнопки
 		ans := make(chan bool,1)
 		stopConversion := make(chan string,1)
 
@@ -310,6 +292,7 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 		label := widgets.NewQLabel2(splitFields[3],nil,0)
     	var input mainComponents.InputsComponent
 		var comboBox *widgets.QComboBox
+
 		var rb mainComponents.RadioStruct
 		var area *widgets.QWidget
 
@@ -325,7 +308,22 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 			comboBox.SetSizeAdjustPolicy(widgets.QComboBox__AdjustToMinimumContentsLength)
 			comboBox.SetCurrentText("")
 			comboBox.SetFixedHeight(22)
+
+			filter := core.NewQObject(nil)
+			filter.ConnectEventFilter(func(watched *core.QObject, event *core.QEvent) bool {
+
+				if event.Type() == core.QEvent__Wheel && !comboBox.HasFocus(){
+
+					return true
+				}
+				return filter.EventFilterDefault(watched, event)
+			})
+			comboBox.InstallEventFilter(filter)
+
+
 		}
+		comboBox.SetFocusPolicy(core.Qt__StrongFocus)
+		//comboBox.SetFocusPolicy(core.Qt__TabFocus)
 
 		vbox.AddWidget(label,0,0)
 		vbox.AddWidget(comboBox, 0, 0)
