@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/gen2brain/go-fitz"
+	"github.com/nfnt/resize"
 	gim "github.com/ozankasikci/go-image-merge"
-	"image/color"
 	"image/jpeg"
 	"image/png"
 	"io/ioutil"
@@ -13,7 +13,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"time"
-	"github.com/nfnt/resize"
 )
 
 
@@ -37,6 +36,7 @@ func ConvertDocxToJPG(inputFile,outputFile string) {
 	jpgResize := resizeJPG(jpgFilepath)
 	mergeJPG(jpgResize,outputFile)
 	os.RemoveAll(filepath.Dir(jpgFilepath[0]))
+	os.RemoveAll(filepath.Dir(jpgResize[0]))
 	os.RemoveAll(filepath.Dir(jpgResize[0]))
 }
 
@@ -96,15 +96,19 @@ func pdfToJpg(filename string) []string {
 	return jpgImagesPath
 }
 
+
 func mergeJPG(jpgImagesPath []string,outputFile string){
 
 	var grids []*gim.Grid
-	for _,imagePath := range jpgImagesPath {
+	tmpDir, err := ioutil.TempDir("./", "background ")
+	defer os.RemoveAll(tmpDir)
+	for n,imagePath := range jpgImagesPath {
 		var g = new(gim.Grid)
 
-		g.BackgroundColor = color.RGBA{R: 0x8b, G: 0xd0, B: 0xc6}
-		g.ImageFilePath = imagePath
-
+		newImagePath := fmt.Sprintf("tempImage%d.png", n)
+		backImagesPath := filepath.Join(tmpDir, newImagePath)
+		getPhone(imagePath,backImagesPath)
+		g.ImageFilePath = backImagesPath
 		grids = append(grids, g)
 	}
 
@@ -120,6 +124,27 @@ func mergeJPG(jpgImagesPath []string,outputFile string){
 		ioutil.WriteFile("pngError",[]byte(err.Error()),0666)
 	}
 }
+
+func getPhone(in,out string){
+
+	grids := []*gim.Grid{
+		{
+			ImageFilePath: "./preview/cat.png",
+			// these grids will be drawn on top of the first grid
+			Grids: []*gim.Grid{
+				{
+					ImageFilePath: in,
+					OffsetX: 10, OffsetY: 10,
+				},
+			},
+		},
+	}
+
+	rgba, _ := gim.New(grids, 1, 1).Merge()
+	outF, _ := os.Create(out)
+	png.Encode(outF, rgba)
+}
+
 
 func resizeJPG(jpgImagesPath []string)[]string{
 var newPaths []string
@@ -137,7 +162,7 @@ var newPaths []string
 		log.Fatal(err)
 	}
 	file.Close()
-	m := resize.Resize(1080, 720, img, resize.Lanczos3)
+	m := resize.Resize(720, 1070, img, resize.Lanczos3)
 	out, err := os.Create(newImagePath)
 	if err != nil {
 		log.Fatal(err)
