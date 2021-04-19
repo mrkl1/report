@@ -70,8 +70,8 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 
 	rb.DefaultName = widgets.NewQRadioButton2("Без изменений",nil)
 	rb.DefaultName.SetChecked(true)
-	rb.Vrio        = widgets.NewQRadioButton2("Врио",nil)
-	rb.Vrid        = widgets.NewQRadioButton2("Врид",nil)
+	rb.Vrio        = widgets.NewQRadioButton2("ВРиО",nil)
+	rb.Vrid        = widgets.NewQRadioButton2("ВРиД",nil)
 
 	vbox.AddWidget(rb.DefaultName,0,0)
 	vbox.AddWidget(rb.Vrio,0,0)

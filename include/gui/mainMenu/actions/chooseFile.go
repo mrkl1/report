@@ -64,10 +64,7 @@ func createDocumentForm(ac *mainComponents.AppComponents,filepath string){
 	//scrollArea := widgets.NewQScrollArea(nil)
 	centralWidget := widgets.NewQWidget(nil,0)
 	//centralGridLayout = widgets.NewQGridLayout(centralWidget)
-
-
-
-	//настройка области для редактирования
+    //настройка области для редактирования
 
 	//scrollArea.SetWidget(centralWidget)
 	//ac.MainWindow.SetCentralWidget(scrollArea)
@@ -105,9 +102,8 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	saveReportButton := widgets.NewQPushButton2(saveText,nil)
 	previewButton := widgets.NewQPushButton2(previewText,nil)
 
-	saveReportButton.SetFixedHeight(22)
-	previewButton.SetFixedHeight(22)
-
+	saveReportButton.SetFixedHeight(25)
+	previewButton.SetFixedHeight(25)
 
 	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
 	scrollArea := widgets.NewQScrollArea(nil)

@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"fmt"
+	"github.com/docxReporter2/include/gui/docx"
 	"github.com/docxReporter2/include/gui/mainComponents"
 	"github.com/therecipe/qt/widgets"
 	"os/exec"
@@ -9,9 +11,26 @@ import (
 )
 
 func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponents.AppComponents){
+
+
+	fontSize := docx.GetAverSizeOfFont(tempDocxForPreview)
+
+	height := "960"
+	width := "1280"
+
+	if fontSize > 24 {
+		width = "800"
+	}
+
 	args := []string{
+		"-input",
 		tempDocxForPreview,     // файл на входе (docx)
+		"-output",
 		previewImageForReport,  //  файл на выходе (png)
+		"-w",
+		width,
+		"-h",
+		height,
 	}
 	var cmd *exec.Cmd
 
@@ -19,6 +38,7 @@ func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponent
 
 	err := cmd.Run()
 	if err != nil {
+		fmt.Println("error cmd:",err)
 		ac.IsConvProcess = true
 		stopConversion <- "false"
 	}
