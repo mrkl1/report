@@ -7,6 +7,7 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -61,8 +62,6 @@ func newDateCombobox(scrollArea *widgets.QScrollArea)*widgets.QComboBox{
 		calendarWidget.Hide()
 	})
 
-
-
 	filter := core.NewQObject(nil)
 	filter.ConnectEventFilter(func(watched *core.QObject, event *core.QEvent) bool {
 
@@ -102,6 +101,41 @@ func newDateCombobox(scrollArea *widgets.QScrollArea)*widgets.QComboBox{
 }
 
 var monthMap map[string]string
+
+func isCorrectData(data string)bool{
+	//var separators = []string{" ","."}
+	//
+	//
+	////naive trim spaces
+	//trimData := strings.TrimSpace(data)
+	//for strings.Contains(trimData,"  "){
+	//	trimData = strings.Replace(trimData,"  "," ",-1)
+	//}
+
+	spaceSepData := strings.Fields(data)
+	if   len(spaceSepData) == 3  {
+		_,ok := monthMap[spaceSepData[1]]
+		if ok {
+			return true
+		}
+
+	}
+
+	dotSepData := strings.Split(data,".")
+	if len(dotSepData) == 3 {
+		for _,d := range dotSepData{
+			_,err := strconv.Atoi(d)
+			if err != nil{
+				return false
+			}
+		}
+		return true
+	}
+
+	return false
+}
+
+
 
 func init(){
 	monthMap = make(map[string]string,0)
@@ -148,6 +182,13 @@ func convertPreviewDataToStandard(previewData string) time.Time  {
 //14:03:2021
 func convertStandardDataToPreview(previewData string) string  {
 	fields := strings.Split(previewData,":")
+	data := strings.Join([]string{fields[0],getMonthFromNumber(fields[1]),fields[2]}," ")
+
+	return data
+}
+
+func convertSeparatorDataToPreview(previewData,separator string) string  {
+	fields := strings.Split(previewData,separator)
 	data := strings.Join([]string{fields[0],getMonthFromNumber(fields[1]),fields[2]}," ")
 
 	return data

@@ -122,7 +122,6 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		}
 	}
 
-
 	editVbox.AddWidget(previewButton,0,0)
 	editVbox.AddWidget(saveReportButton,0,0)
 
@@ -130,8 +129,6 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	editVbox.AddWidget(infoConversion,0,core.Qt__AlignCenter)
 
 	mainVbox.AddWidget(editDocWidget,0,0)
-
-
 
 	scrollArea.SetWidget(editDocWidget)
 
@@ -142,19 +139,39 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	View := createPreviewArea()
 
-
-
 	previewButton.ConnectClicked(func(bool){
 		document,_ := docx.ReadDocxText(filePath)
 		newDocPath := tempDocxForPreview
 
+		var isFillFieldsErr = false
+
 		for _,input := range inputs {
+				input.Input.SetStyleSheetDefault("")
+		}
+
+		var errText string
+
+		for _,input := range inputs {
+
+			if input.IsDate && !isCorrectData(input.Input.CurrentText()) {
+				errText = "\nи исправьте ошибки в полях с датами"
+				input.Input.SetStyleSheet("border: 1px solid red;")
+				isFillFieldsErr = true
+				continue
+			}
+
 			if input.Input.CurrentText() == "" {
-				widgets.QMessageBox_About(nil, "Warning", "Заполните все поля")
-				return
+				input.Input.SetStyleSheet("border: 1px solid red;")
+				isFillFieldsErr = true
+				continue
 			}
 		}
 
+		if isFillFieldsErr {
+			widgets.QMessageBox_About(nil, "Warning", "Заполните все поля"+errText)
+			errText = ""
+			return
+		}
 
 		var simpleWords []string
 		for _,field := range document.GetFieldsNames(){
@@ -202,11 +219,34 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	saveReportButton.ConnectClicked(func(checked bool) {
 		document,_ := docx.ReadDocxText(filePath)
 
-		for _,input := range inputs{
-			if input.Input.CurrentText() == ""{
-				widgets.QMessageBox_About(nil,"Warning","Заполните все поля")
-				return
+		var isFillFieldsErr = false
+
+		for _,input := range inputs {
+			input.Input.SetStyleSheetDefault("")
+		}
+
+		var errText string
+
+		for _,input := range inputs {
+
+			if input.IsDate && !isCorrectData(input.Input.CurrentText()) {
+				errText = "\nи исправьте ошибки в полях с датами"
+				input.Input.SetStyleSheet("border: 1px solid red;")
+				isFillFieldsErr = true
+				continue
 			}
+
+			if input.Input.CurrentText() == "" {
+				input.Input.SetStyleSheet("border: 1px solid red;")
+				isFillFieldsErr = true
+				continue
+			}
+		}
+
+		if isFillFieldsErr {
+			widgets.QMessageBox_About(nil, "Warning", "Заполните все поля"+errText)
+			errText = ""
+			return
 		}
 
 		var fileDialog = widgets.NewQFileDialog2(nil,"Save as...",
@@ -294,7 +334,9 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 
 		if splitFields[0]==jsonConfig.DateCategoryName{
 			comboBox = newDateCombobox(scrollArea)
+			input.IsDate = true
 		} else {
+			input.IsDate = false
 			comboBox = widgets.NewQComboBox(nil)
 			comboBox.SetFont(font)
 			comboBox.SetEditable(true)

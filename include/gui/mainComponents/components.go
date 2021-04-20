@@ -21,6 +21,7 @@ type InputsComponent struct {
 	InputName   	string
 	//поле заполняется непосредственно перед функцией замены
 	WordForReplace  string
+	IsDate			bool
 	PositionType    RadioStruct
 }
 
