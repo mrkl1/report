@@ -19,8 +19,7 @@ func newDateCombobox(scrollArea *widgets.QScrollArea)*widgets.QComboBox{
 	dateEdit := widgets.NewQComboBox(nil)
 
 	calendarWidget := widgets.NewQCalendarWidget(nil)
-	dateEdit.AddItems([]string{convertStandardDataToPreview(calendarWidget.SelectedDate().ToString("dd:MM:yyyy")),
-		"1","2","3"})
+	dateEdit.AddItems([]string{convertStandardDataToPreview(calendarWidget.SelectedDate().ToString("dd:MM:yyyy"))})
 	dateEdit.SetEditable(true)
 	dateEdit.ConnectMousePressEvent(func(event *gui.QMouseEvent) {
 		dateEdit.ConnectMousePressEvent(func(event *gui.QMouseEvent) {
@@ -115,7 +114,9 @@ func isCorrectData(data string)bool{
 	spaceSepData := strings.Fields(data)
 	if   len(spaceSepData) == 3  {
 		_,ok := monthMap[spaceSepData[1]]
-		if ok {
+		_,err1 := strconv.Atoi(spaceSepData[0])
+		_,err2 := strconv.Atoi(spaceSepData[2])
+		if ok && err1 == nil && err2 == nil{
 			return true
 		}
 
