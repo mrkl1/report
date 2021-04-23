@@ -187,8 +187,10 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 		if strings.Contains(paragraphText,tf.TemplateName){
 			if !input.PositionType.IsNil() {
 				if input.PositionType.GetChosenVariant() !=  "Default" {
+					//получаем правильный падеж для врио/врид
 					var vrType string
 					tf.CaseType,vrType = input.PositionType.GetCorrectCase(tf.CaseType)
+
 					wordForReplace = prepareForReplace(tf,wordForReplace)
 					wordForReplace = jsonConfig.FirstToLower(wordForReplace)
 
@@ -217,7 +219,25 @@ func prepareForReplace(tf jsonConfig.TemplateFields,wordForReplace string)string
 	wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
 	wordForReplace = jsonConfig.ChangeAbbreviation(wordForReplace,tf.ChangeShortForm)
 	wordForReplace = jsonConfig.ChangeLetterCase(wordForReplace,tf.ChangeLetterCase)
+	wordForReplace = PrepareSettings(wordForReplace)
 	return wordForReplace
+}
+
+func PrepareSettings(str string)string{
+	sets := jsonConfig.ReadSettingsFromConfig()
+
+	for _,s := range sets{
+		switch  s.SettingName{
+		case  "Убрать АФСО" :
+			if s.IsChecked && (strings.Index(str,"Академии ФСО России") != -1) {
+				str = str[:strings.Index(str,"Академии ФСО России")]
+				str = strings.TrimRight(str,spaceSeparator.SpaceSeparatorSymb)
+			}
+
+		}
+	}
+
+	return str
 }
 
 

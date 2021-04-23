@@ -21,7 +21,7 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 	toggleButton.SetStyleSheet("QToolButton { border: none; }")
 	toggleButton.SetToolButtonStyle(core.Qt__ToolButtonTextBesideIcon)
 	toggleButton.SetArrowType(core.Qt__RightArrow)
-	toggleButton.SetText("test")
+	toggleButton.SetText("врио/врид")
 	toggleButton.SetCheckable(true)
 	toggleButton.SetChecked(false)
 
@@ -54,7 +54,7 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 		if toggleButton.IsChecked(){
 			toggleButton.SetArrowType(core.Qt__DownArrow)
 		} else {
-			toggleButton.SetArrowType(core.Qt__LeftArrow)
+			toggleButton.SetArrowType(core.Qt__RightArrow)
 		}
 		if toggleButton.IsChecked(){
 			toggleAnimation.SetDirection(core.QAbstractAnimation__Forward)
@@ -72,10 +72,14 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 	rb.DefaultName.SetChecked(true)
 	rb.Vrio        = widgets.NewQRadioButton2("ВРиО",nil)
 	rb.Vrid        = widgets.NewQRadioButton2("ВРиД",nil)
+	rb.VridShort   = widgets.NewQRadioButton2("ВРиД (сокр. форма)",nil)
+	rb.VrioShort   = widgets.NewQRadioButton2("ВРиО (сокр. форма)",nil)
 
 	vbox.AddWidget(rb.DefaultName,0,0)
 	vbox.AddWidget(rb.Vrio,0,0)
 	vbox.AddWidget(rb.Vrid,0,0)
+	vbox.AddWidget(rb.VrioShort,0,0)
+	vbox.AddWidget(rb.VridShort,0,0)
 
 	contentArea.SetLayout(vbox)
 

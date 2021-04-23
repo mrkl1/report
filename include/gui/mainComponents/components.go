@@ -32,6 +32,8 @@ type RadioStruct struct{
 	DefaultName *widgets.QRadioButton
 	Vrio *widgets.QRadioButton
 	Vrid *widgets.QRadioButton
+	VrioShort *widgets.QRadioButton
+	VridShort *widgets.QRadioButton
 }
 
 func (r *RadioStruct)IsNil() bool{
@@ -46,6 +48,10 @@ func (r *RadioStruct) GetChosenVariant() string{
 		return "Vrio"
 	}else if r.Vrid.IsChecked() {
 		return "Vrid"
+	}else if r.VridShort.IsChecked() {
+		return "VridShort"
+	}else if r.VrioShort.IsChecked() {
+		return "VrioShort"
 	}
 
 	return "unknown"
@@ -58,12 +64,16 @@ func (r *RadioStruct) GetCorrectCase(curCase string)(caseTForPos,caseTForVr stri
 	case choosenVar == "Vrid" || choosenVar == "Vrio":
 
 		//можно сделать через мапу, но наверное уже нужна БД
-		if curCase == "ИП" {
-			return "РП",curCase
-		}
-		if curCase == "ДП" {
-			return "РП",curCase
-		}
+		//if curCase == "ИП" {
+		//	return "РП",curCase
+		//}
+		//if curCase == "ДП" {
+		//	return "РП",curCase
+		//}
+		return "РП",curCase
+	case choosenVar == "VridShort" || choosenVar == "VrioShort":
+		//можно сделать через мапу, но наверное уже нужна БД
+		return "РП",curCase
 	}
 	return curCase,curCase
 }

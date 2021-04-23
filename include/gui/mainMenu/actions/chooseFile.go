@@ -521,6 +521,27 @@ func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.Inp
 		return word
 	}
 
+	if !inputText.PositionType.IsNil()	&&
+			inputText.PositionType.GetChosenVariant() !=  "Default"{
+
+		//получаем правильный падеж для врио/врид
+		var vrCase string
+		wordForReplace := inputText.Input.CurrentText()
+		wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
+
+		tf.CaseType,vrCase = inputText.PositionType.GetCorrectCase(tf.CaseType)
+		wordForReplace = jsonConfig.FirstToLower(wordForReplace)
+
+		fmt.Println(tf)
+		wordForReplace = jsonConfig.ChangeAbbreviation(wordForReplace,tf.ChangeShortForm)
+		wordForReplace = jsonConfig.FirstToLower(wordForReplace)
+		wordForReplace = jsonConfig.GetFullName(inputText.PositionType.GetChosenVariant(),vrCase)+wordForReplace
+		wordForReplace = jsonConfig.ChangeLetterCase(wordForReplace,tf.ChangeLetterCase)
+
+		wordForReplace = strings.Replace(wordForReplace,spaceSeparator.SpaceSeparatorSymb," ",-1)
+
+		return  wordForReplace
+	}
 
 	word :=	jsonConfig.GetNameWithCase(tf.Category,inputText.Input.CurrentText(),tf.CaseType)
 	word = jsonConfig.CutField(word,tf.ShortMode)
