@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+//структура параграфа
 type P struct {
 	XMLName xml.Name `xml:"p"`
 	Text    string   `xml:",chardata"`
@@ -22,7 +23,9 @@ type P struct {
 }
 
 
-
+//Функциия возвращает средний размер
+//шрифта, но он в 2 раза больше чем тот,
+//что указан в редакторах
 func GetAverSizeOfFont(path string)int{
 	doc,_ := ReadDocxText(path)
 	var count int
@@ -35,9 +38,7 @@ func GetAverSizeOfFont(path string)int{
 			sum +=  par.R.RPr.Sz.Val
 			count++
 		}
-
 	}
 	doc.Close()
-
 	return int( math.Round( float64(sum)/float64(count) ) )
 }

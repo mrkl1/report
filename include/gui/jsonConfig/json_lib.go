@@ -37,6 +37,11 @@ const (
 	RankCategoryName = "Звания"
 	PositionCategoryName = "Должности"
 	DateCategoryName = "Дата"
+	/*
+	Время следования
+	"Отпуск"
+	 */
+
 
 	)
 

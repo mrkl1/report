@@ -358,7 +358,6 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 			})
 			comboBox.InstallEventFilter(filter)
 
-
 		}
 		comboBox.SetFocusPolicy(core.Qt__StrongFocus)
 		//comboBox.SetFocusPolicy(core.Qt__TabFocus)

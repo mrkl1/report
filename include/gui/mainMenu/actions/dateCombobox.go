@@ -52,9 +52,9 @@ func newDateCombobox(scrollArea *widgets.QScrollArea)*widgets.QComboBox{
 		dateEdit.AddItems([]string{convertStandardDataToPreview(calendarWidget.SelectedDate().ToString("dd:MM:yyyy"))})
 	})
 
-	//Этот сигнал срабатывает, когда пользователь нажимаете
-	//the Return or Enter key or
-	//double-clicks на дате в календаре (виджете)
+	//Этот сигнал срабатывает, когда пользователь нажимает
+	// Return/nter key or double-clicks
+	//на дате в календаре (виджете)
 	calendarWidget.ConnectActivated(func(date *core.QDate){
 		dateEdit.RemoveItem(0)
 		dateEdit.AddItems([]string{convertStandardDataToPreview(calendarWidget.SelectedDate().ToString("dd:MM:yyyy"))})
