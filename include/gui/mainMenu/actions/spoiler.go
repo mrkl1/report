@@ -8,7 +8,7 @@ import (
 
 
 
-
+//функция возвращает панель для выбора врио/врид
 func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 
 	centralWidget := widgets.NewQWidget(nil,0)
@@ -31,7 +31,6 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 
 	contentArea.SetStyleSheet("QScrollArea { background-color: white; border: none; }");
 	contentArea.SetSizePolicy2(widgets.QSizePolicy__Expanding, widgets.QSizePolicy__Fixed)
-
 
 	contentArea.SetMaximumHeight(0)
 	contentArea.SetMinimumHeight(0)
@@ -83,6 +82,8 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 
 	contentArea.SetLayout(vbox)
 
+
+	//////////настройка анимации
 	collapsedHeight := centralWidget.SizeHint().Height() - contentArea.MaximumHeight()
 	contentHeight :=  vbox.SizeHint().Height()
 
@@ -90,7 +91,6 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 		var anim = core.QVariantAnimation{QAbstractAnimation: *toggleAnimation.AnimationAt(i) }
 
 		anim.SetDuration(300)
-
 		anim.SetStartValue(core.NewQVariant5(collapsedHeight))
 		anim.SetEndValue(core.NewQVariant5(collapsedHeight+contentHeight))
 
@@ -102,9 +102,7 @@ func spoiler() (*widgets.QWidget,mainComponents.RadioStruct){
 
 	animC.SetStartValue(core.NewQVariant5(0))
 	animC.SetEndValue(core.NewQVariant5(contentHeight))
-
-
-
+	/////////////настройка анимации
 
 	return centralWidget,rb
 }

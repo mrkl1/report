@@ -3,9 +3,9 @@ package autocomplete
 import "encoding/xml"
 
 
-
-
-
+/*
+структура config/autoCompleteDB.xml
+ */
 type ReportNameList struct {
 	XMLName xml.Name `xml:"ReportNameList"`
 	Text    string   `xml:",chardata"`
