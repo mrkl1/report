@@ -16,10 +16,10 @@ func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponent
 	fontSize := docx.GetAverSizeOfFont(tempDocxForPreview)
 
 	height := "960"
-	width := "1280"
+	width := "1150"
 
 	if fontSize > 24 {
-		width = "800"
+		width = "700"
 	}
 
 	args := []string{
