@@ -23,6 +23,7 @@ type InputsComponent struct {
 	WordForReplace  string
 	IsDate			bool
 	PositionType    RadioStruct
+	DateType        RadioDate
 }
 
 
@@ -36,8 +37,17 @@ type RadioStruct struct{
 	VridShort *widgets.QRadioButton
 }
 
+type RadioDate struct{
+	WithDate    *widgets.QRadioButton
+	WithoutDate *widgets.QRadioButton
+}
+
 func (r *RadioStruct)IsNil() bool{
 	return r.DefaultName == nil
+}
+
+func (r *RadioDate)IsNil() bool{
+	return r.WithDate == nil
 }
 
 func (r *RadioStruct) GetChosenVariant() string{

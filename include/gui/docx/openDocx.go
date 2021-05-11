@@ -185,6 +185,22 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 		paragraphText := ExtractTextFromContent(p.word)
 
 		if strings.Contains(paragraphText,tf.TemplateName){
+
+
+			if !input.DateType.IsNil() {
+				if input.DateType.WithoutDate.IsChecked(){
+					dotSepData := strings.Split(wordForReplace,".")
+					if len(dotSepData) == 3 {
+						wordForReplace = dotSepData[1]+"."+dotSepData[2]
+						break
+					}
+					wordForReplace = strings.Fields(wordForReplace)[1]+" "+strings.Fields(wordForReplace)[2]
+				}
+
+			}
+
+
+			//врио/врид замена
 			if !input.PositionType.IsNil() {
 				if input.PositionType.GetChosenVariant() !=  "Default" {
 					//получаем правильный падеж для врио/врид

@@ -330,6 +330,7 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 		var comboBox *widgets.QComboBox
 
 		var rb mainComponents.RadioStruct
+		var db mainComponents.RadioDate
 		var area *widgets.QWidget
 
 		if splitFields[0]==jsonConfig.DateCategoryName{
@@ -370,10 +371,16 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 			vbox.AddWidget(area, 0, 0)
 		}
 
+		if splitFields[0]==jsonConfig.DateCategoryName{
+			area,db = spoilerDate()
+			vbox.AddWidget(area, 0, 0)
+		}
+
 
 		input.Input = comboBox
 		input.InputName = label.Text()
 		input.PositionType = rb
+		input.DateType = db
 
 
 		inputs = append(inputs,input)
@@ -509,15 +516,19 @@ func updatePreview()*widgets.QGraphicsScene {
 
 
 func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.InputsComponent)string{
-
+	wordForReplace := inputText.Input.CurrentText()
 	if tf.Category == jsonConfig.DateCategoryName {
+		if !inputText.DateType.IsNil() {
+			if inputText.DateType.WithoutDate.IsChecked(){
+				dotSepData := strings.Split(wordForReplace,".")
+				if len(dotSepData) == 3 {
+					return 	dotSepData[1]+"."+dotSepData[2]
+				}
+				wordForReplace = strings.Fields(wordForReplace)[1]+" "+strings.Fields(wordForReplace)[2]
+			}
 
-		word := inputText.Input.CurrentText()
-		if tf.ShortMode == "1" {
-			splWord := strings.Fields(word)
-			word = strings.Join(splWord[1:]," ")
 		}
-		return word
+		return wordForReplace
 	}
 
 	if !inputText.PositionType.IsNil()	&&
@@ -525,7 +536,7 @@ func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.Inp
 
 		//получаем правильный падеж для врио/врид
 		var vrCase string
-		wordForReplace := inputText.Input.CurrentText()
+
 		wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
 
 		tf.CaseType,vrCase = inputText.PositionType.GetCorrectCase(tf.CaseType)
