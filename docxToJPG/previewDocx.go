@@ -90,7 +90,7 @@ func ConvertDocxToJPG(inputFile,outputFile string) {
 func docxToPDFWin(filename string) string {
 	args := []string{
 		filename,
-		"pdf.docx/1.pdf",
+		"pdf.docx/" + filepath.Base(removeExt(filename))  + ".pdf",
 	}
 	cmd := exec.Command("OfficeToPDF.exe", args...)
 	cmd.Run()
