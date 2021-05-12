@@ -15,6 +15,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 )
 
 
@@ -69,7 +70,14 @@ func main() {
 
 //
 func ConvertDocxToJPG(inputFile,outputFile string) {
-	pdfFilename := docxToPDF(inputFile)
+	var pdfFilename string
+	if runtime.GOOS == "windows" {
+		pdfFilename = docxToPDFWin(inputFile)
+	} else {
+		pdfFilename = docxToPDF(inputFile)
+	}
+
+
 	defer os.Remove(pdfFilename)
 	fmt.Println(pdfFilename)
 	jpgFilepath := pdfToJpg(pdfFilename)
@@ -77,6 +85,17 @@ func ConvertDocxToJPG(inputFile,outputFile string) {
 	mergeJPG(jpgResize,outputFile)
 	os.RemoveAll(filepath.Dir(jpgFilepath[0]))
 	os.RemoveAll(filepath.Dir(jpgResize[0]))
+}
+
+func docxToPDFWin(filename string) string {
+	args := []string{
+		filename,
+		"pdf.docx/1.pdf",
+	}
+	cmd := exec.Command("OfficeToPDF.exe", args...)
+	cmd.Run()
+
+	return "pdf.docx/" + filepath.Base(removeExt(filename))  + ".pdf"
 }
 
 //нужен дополнительный тест под винду
