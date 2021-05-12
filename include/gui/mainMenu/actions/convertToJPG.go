@@ -15,6 +15,8 @@ func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponent
 
 	fontSize := docx.GetAverSizeOfFont(tempDocxForPreview)
 
+	fmt.Println("fontSize",fontSize)
+
 	height := "960"
 	width := "1150"
 
@@ -33,7 +35,7 @@ func convertDocxToJPG(end chan bool,stopConversion chan string,ac *mainComponent
 		height,
 	}
 	var cmd *exec.Cmd
-
+	fmt.Println("args",args)
 	cmd = getCommand(args...)
 
 	err := cmd.Run()
