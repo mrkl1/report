@@ -199,8 +199,3 @@ func spoilerDate() (*widgets.QWidget,mainComponents.RadioDate){
 
 	return centralWidget,rb
 }
-
-
-
-
-

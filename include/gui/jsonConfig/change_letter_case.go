@@ -220,3 +220,35 @@ func getFIOInitials(fio string,isSign bool)string{
 	return strings.Join(newFIO," ")
 }
 
+//WARNING заменить
+func GetCaseMonth(monthN,caseM string)string{
+	if caseM == "ПП"{
+		switch monthN {
+		case "января":
+			return "январе"
+		case "февраля":
+			return "феврале"
+		case "марта":
+			return "марте"
+		case "апреля":
+			return "апреле"
+		case "мая":
+			return "мае"
+		case "июня":
+			return "июне"
+		case "июле":
+			return "июля"
+		case "августа":
+			return "августе"
+		case "сентября":
+			return "сентябре"
+		case "октября":
+			return "октябре"
+		case "ноября":
+			return "ноябре"
+		case "декабре":
+			return "декабря"
+		}
+	}
+	return monthN
+}

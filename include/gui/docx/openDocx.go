@@ -188,13 +188,10 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 
 
 			if !input.DateType.IsNil() {
+				wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
 				if input.DateType.WithoutDate.IsChecked(){
-					dotSepData := strings.Split(wordForReplace,".")
-					if len(dotSepData) == 3 {
-						wordForReplace = dotSepData[1]+"."+dotSepData[2]
-						break
-					}
-					wordForReplace = strings.Fields(wordForReplace)[1]+" "+strings.Fields(wordForReplace)[2]
+
+					wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
 				}
 
 			}

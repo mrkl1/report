@@ -519,14 +519,10 @@ func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.Inp
 	wordForReplace := inputText.Input.CurrentText()
 	if tf.Category == jsonConfig.DateCategoryName {
 		if !inputText.DateType.IsNil() {
+			wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
 			if inputText.DateType.WithoutDate.IsChecked(){
-				dotSepData := strings.Split(wordForReplace,".")
-				if len(dotSepData) == 3 {
-					return 	dotSepData[1]+"."+dotSepData[2]
-				}
-				wordForReplace = strings.Fields(wordForReplace)[1]+" "+strings.Fields(wordForReplace)[2]
+				wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
 			}
-
 		}
 		return wordForReplace
 	}
