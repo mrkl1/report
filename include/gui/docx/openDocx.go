@@ -188,13 +188,15 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 
 
 			if !input.DateType.IsNil() {
-				wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
-				if input.DateType.WithoutDate.IsChecked(){
-
-					wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+				filedsDate := strings.Fields(wordForReplace)
+				if len(filedsDate) == 3 {
+					wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+					if input.DateType.WithoutDate.IsChecked(){
+						wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+					}
 				}
-
 			}
+
 
 
 			//врио/врид замена

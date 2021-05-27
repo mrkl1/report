@@ -107,6 +107,13 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
 	scrollArea := widgets.NewQScrollArea(nil)
+
+	panel,chbxs := jsonConfig.CreateSetPane()
+
+
+
+
+	editVbox.AddWidget(panel,0,0)
 	inputs = createComboboxFields(editVbox, documentFields,scrollArea)
 
 	fp,_ := filepath.Abs(".")
@@ -140,10 +147,24 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	View := createPreviewArea()
 
 	previewButton.ConnectClicked(func(bool){
+
+		var sets []jsonConfig.Settings
+		for _,cb := range chbxs {
+			sets = append(sets, jsonConfig.Settings{
+				SettingName: cb.Text(),
+				IsChecked:   cb.IsChecked(),
+			})
+		}
+		jsonConfig.SetNewConfig(sets)
+
+
 		document,_ := docx.ReadDocxText(filePath)
 		newDocPath := tempDocxForPreview
 
 		var isFillFieldsErr = false
+
+
+
 
 		for _,input := range inputs {
 				input.Input.SetStyleSheetDefault("")
@@ -217,6 +238,18 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	//т.е. сначала замена текста на тот, что есть в inputs
 	//и только затем документ сохраняется
 	saveReportButton.ConnectClicked(func(checked bool) {
+
+
+		var sets []jsonConfig.Settings
+		for _,cb := range chbxs {
+			sets = append(sets, jsonConfig.Settings{
+				SettingName: cb.Text(),
+				IsChecked:   cb.IsChecked(),
+			})
+		}
+		jsonConfig.SetNewConfig(sets)
+
+
 		document,_ := docx.ReadDocxText(filePath)
 
 		var isFillFieldsErr = false
@@ -373,6 +406,7 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 
 		if splitFields[0]==jsonConfig.DateCategoryName{
 			area,db = spoilerDate()
+			db.ChooseRadioBut(splitFields[2])
 			vbox.AddWidget(area, 0, 0)
 		}
 
@@ -381,6 +415,8 @@ func createComboboxFields(vbox *widgets.QVBoxLayout,fields []string,scrollArea *
 		input.InputName = label.Text()
 		input.PositionType = rb
 		input.DateType = db
+
+		///флаг для сокращенной формы категории (для даты отдельная обработка
 
 
 		inputs = append(inputs,input)
@@ -419,8 +455,6 @@ func createPreviewArea()*widgets.QGraphicsView{
 	Item = widgets.NewQGraphicsPixmapItem2(gui.NewQPixmap().FromImage(img, 0), nil)
 
 	drag := gui.NewQCursor2(core.Qt__DragMoveCursor)
-
-
 
 	View.SetCursor(drag)
 
@@ -519,9 +553,17 @@ func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.Inp
 	wordForReplace := inputText.Input.CurrentText()
 	if tf.Category == jsonConfig.DateCategoryName {
 		if !inputText.DateType.IsNil() {
-			wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
-			if inputText.DateType.WithoutDate.IsChecked(){
-				wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+			filedsDate := strings.Fields(wordForReplace)
+			if len(filedsDate) == 3 {
+				wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+				if inputText.DateType.WithoutDate.IsChecked(){
+					wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+				}
+				//вообще тут вопрос как представлять это
+				//например "2021" или "_______________ 2021"
+				if inputText.DateType.WithoutDateAndMounth.IsChecked(){
+					wordForReplace =  strings.Fields(wordForReplace)[2]
+				}
 			}
 		}
 		return wordForReplace

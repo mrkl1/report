@@ -221,6 +221,8 @@ func getFIOInitials(fio string,isSign bool)string{
 }
 
 //WARNING заменить
+//вообще думаю, что надо переводить все на БД
+//т.е. уже слишком неудобно работать с json
 func GetCaseMonth(monthN,caseM string)string{
 	if caseM == "ПП"{
 		switch monthN {

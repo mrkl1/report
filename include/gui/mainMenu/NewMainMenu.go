@@ -1,10 +1,8 @@
 package mainMenu
 
 import (
-	"github.com/docxReporter2/include/gui/jsonConfig"
 	"github.com/docxReporter2/include/gui/mainComponents"
 	"github.com/docxReporter2/include/gui/mainMenu/actions"
-	"github.com/therecipe/qt/gui"
 )
 
 
@@ -23,12 +21,12 @@ const (
 
 func NewMainMenu(ac *mainComponents.AppComponents){
 	fileMenu 		 := ac.MainWindow.MenuBar().AddMenu2(mainMenuFileElement)
-	settingsMenu 		 := ac.MainWindow.MenuBar().AddMenu2(mainMenuSettings)
+	//settingsMenu 		 := ac.MainWindow.MenuBar().AddMenu2(mainMenuSettings)
 	chooseReport     := fileMenu.AddAction(mainMenuFileActionChooseMenu)
 	//editDictionary   := fileMenu.AddAction(mainMenuFileActionEditDictionary)
 	exitFromProgram  := fileMenu.AddAction(mainMenuFileActionEditExit)
 
-	mainMenuParams := settingsMenu.AddAction(mainMenuParams)
+	//mainMenuParams := settingsMenu.AddAction(mainMenuParams)
 
 	chooseReport.ConnectTriggered(func(check bool){
 		actions.ChoseFileForReport(ac)
@@ -38,23 +36,23 @@ func NewMainMenu(ac *mainComponents.AppComponents){
 		ac.Application.Exit(0)
 	})
 
-	mainMenuParams.ConnectTriggered(func(bool){
-		setWind,cbxs := jsonConfig.CreateSetWindow()
-		setWind.Show()
-
-		setWind.ConnectCloseEvent(func(event *gui.QCloseEvent){
-			var sets []jsonConfig.Settings
-
-			for _,cb := range cbxs {
-				sets = append(sets, jsonConfig.Settings{
-					SettingName: cb.Text(),
-					IsChecked:   cb.IsChecked(),
-				})
-			}
-			jsonConfig.SetNewConfig(sets)
-		})
-
-	})
+	//mainMenuParams.ConnectTriggered(func(bool){
+	//	setWind,cbxs := jsonConfig.CreateSetWindow()
+	//	setWind.Show()
+	//
+	//	setWind.ConnectCloseEvent(func(event *gui.QCloseEvent){
+	//		var sets []jsonConfig.Settings
+	//
+	//		for _,cb := range cbxs {
+	//			sets = append(sets, jsonConfig.Settings{
+	//				SettingName: cb.Text(),
+	//				IsChecked:   cb.IsChecked(),
+	//			})
+	//		}
+	//		jsonConfig.SetNewConfig(sets)
+	//	})
+	//
+	//})
 
 
 

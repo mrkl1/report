@@ -28,7 +28,6 @@ type InputsComponent struct {
 
 
 
-
 type RadioStruct struct{
 	DefaultName *widgets.QRadioButton
 	Vrio *widgets.QRadioButton
@@ -40,6 +39,7 @@ type RadioStruct struct{
 type RadioDate struct{
 	WithDate    *widgets.QRadioButton
 	WithoutDate *widgets.QRadioButton
+	WithoutDateAndMounth *widgets.QRadioButton
 }
 
 func (r *RadioStruct)IsNil() bool{
@@ -48,6 +48,18 @@ func (r *RadioStruct)IsNil() bool{
 
 func (r *RadioDate)IsNil() bool{
 	return r.WithDate == nil
+}
+
+func (r *RadioDate)ChooseRadioBut(setVar string) {
+	if setVar == "0" {
+		r.WithDate.SetChecked(true)
+	}
+	if setVar == "1" {
+		r.WithoutDate.SetChecked(true)
+	}
+	if setVar == "2" {
+		r.WithoutDateAndMounth.SetChecked(true)
+	}
 }
 
 func (r *RadioStruct) GetChosenVariant() string{
