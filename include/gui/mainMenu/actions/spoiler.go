@@ -166,10 +166,10 @@ func spoilerDate() (*widgets.QWidget,mainComponents.RadioDate){
 
 	var rb mainComponents.RadioDate
 
-	rb.WithDate = widgets.NewQRadioButton2("C датой",nil)
+	rb.WithDate = widgets.NewQRadioButton2("Полная дата",nil)
 	rb.WithDate.SetChecked(true)
-	rb.WithoutDate        = widgets.NewQRadioButton2("Без даты",nil)
-	rb.WithoutDateAndMounth        = widgets.NewQRadioButton2("Без даты и месяца",nil)
+	rb.WithoutDate        = widgets.NewQRadioButton2("Без числа",nil)
+	rb.WithoutDateAndMounth        = widgets.NewQRadioButton2("Без числа и месяца",nil)
 
 	vbox.AddWidget(rb.WithDate,0,0)
 	vbox.AddWidget(rb.WithoutDate,0,0)
