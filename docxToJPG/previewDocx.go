@@ -26,7 +26,7 @@ import (
 
 var helpInfo = `example of usage:
   -input="`+filepath.Join("temp","example.docx")+`"`+""+
-`  -output="`+filepath.Join("temp","example.jpg")+`"`+` -w=1280`+` -h=960`
+	`  -output="`+filepath.Join("temp","example.jpg")+`"`+` -w=1280`+` -h=960`
 
 //func helpInfo()string{
 //	return ""
@@ -89,6 +89,7 @@ func ConvertDocxToJPG(inputFile,outputFile string) {
 
 func docxToPDFWin(filename string) string {
 	args := []string{
+		"/noquit", //чтобы не закрывать ворд
 		filename,
 		"pdf.docx/" + filepath.Base(removeExt(filename))  + ".pdf",
 	}
@@ -171,9 +172,9 @@ func mergeJPG(jpgImagesPath []string,outputFile string){
 		grids = append(grids, g)
 
 	}
-
 	rgba,_ := gim.New(grids,1,len(jpgImagesPath)).Merge()
 	file, err := os.Create(outputFile)
+	defer file.Close()
 	if err != nil {
 		file,_ = os.Open(outputFile)
 	}
@@ -203,7 +204,9 @@ func getPhone(in,out string){
 
 	rgba, _ := gim.New(grids, 1, 1).Merge()
 	outF, _ := os.Create(out)
+	defer outF.Close()
 	png.Encode(outF,rgba)
+
 }
 
 func createBackground(w,h int){
@@ -226,28 +229,28 @@ func createBackground(w,h int){
 
 
 func resizeJPG(jpgImagesPath []string)[]string{
-var newPaths []string
+	var newPaths []string
 	tmpDir, _ := ioutil.TempDir("./", "resized")
 	for i,imagePath := range jpgImagesPath {
 
-	newImagePath := filepath.Join(tmpDir,fmt.Sprintf("resImage%d.jpg", i))
-	newPaths = append(newPaths,newImagePath)
+		newImagePath := filepath.Join(tmpDir,fmt.Sprintf("resImage%d.jpg", i))
+		newPaths = append(newPaths,newImagePath)
 		file, err := os.Open(imagePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	img, err := jpeg.Decode(file)
-	if err != nil {
-		log.Fatal(err)
-	}
-	file.Close()
-	m := resize.Resize(defaultWidth, defaultHeight, img, resize.Lanczos3)
-	out, err := os.Create(newImagePath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer out.Close()
-	jpeg.Encode(out, m, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+		img, err := jpeg.Decode(file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		file.Close()
+		m := resize.Resize(defaultWidth, defaultHeight, img, resize.Lanczos3)
+		out, err := os.Create(newImagePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer out.Close()
+		jpeg.Encode(out, m, nil)
 	}
 	return newPaths
 }
