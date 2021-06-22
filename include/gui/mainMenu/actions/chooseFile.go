@@ -113,12 +113,12 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
 	scrollArea := widgets.NewQScrollArea(nil)
 
-	panel,chbxs := jsonConfig.CreateSetPane()
+	//panel,chbxs := jsonConfig.CreateSetPane()
 
 
 
 
-	editVbox.AddWidget(panel,0,0)
+	//editVbox.AddWidget(panel,0,0)
 	inputs = createComboboxFields(editVbox, documentFields,scrollArea)
 
 	fp,_ := filepath.Abs(".")
@@ -170,14 +170,14 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	previewButton.ConnectClicked(func(bool){
 
-		var sets []jsonConfig.Settings
-		for _,cb := range chbxs {
-			sets = append(sets, jsonConfig.Settings{
-				SettingName: cb.Text(),
-				IsChecked:   cb.IsChecked(),
-			})
-		}
-		jsonConfig.SetNewConfig(sets)
+		//var sets []jsonConfig.Settings
+		//for _,cb := range chbxs {
+		//	sets = append(sets, jsonConfig.Settings{
+		//		SettingName: cb.Text(),
+		//		IsChecked:   cb.IsChecked(),
+		//	})
+		//}
+		//jsonConfig.SetNewConfig(sets)
 
 
 		document,_ := docx.ReadDocxText(filePath)
@@ -262,14 +262,14 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	saveReportButton.ConnectClicked(func(checked bool) {
 
 
-		var sets []jsonConfig.Settings
-		for _,cb := range chbxs {
-			sets = append(sets, jsonConfig.Settings{
-				SettingName: cb.Text(),
-				IsChecked:   cb.IsChecked(),
-			})
-		}
-		jsonConfig.SetNewConfig(sets)
+		//var sets []jsonConfig.Settings
+		//for _,cb := range chbxs {
+		//	sets = append(sets, jsonConfig.Settings{
+		//		SettingName: cb.Text(),
+		//		IsChecked:   cb.IsChecked(),
+		//	})
+		//}
+		//jsonConfig.SetNewConfig(sets)
 
 
 		document,_ := docx.ReadDocxText(filePath)
