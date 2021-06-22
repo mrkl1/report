@@ -23,7 +23,9 @@ type Report struct {
 
 type FullName struct {
 	Name string `xml:"name,attr"`
+	IsActive  bool       `xml:"isActive,attr"`
 	Usernames []Username `xml:"username"`
+
 }
 
 type Username struct {
@@ -35,25 +37,37 @@ type Username struct {
 //
 func ReadConfigFor(reportName,fullName string)FullName{
 	r := &Root{}
+	report := FullName{}
 	b,_ := ioutil.ReadFile(configAutocompleteDB)
 	xml.Unmarshal(b,r)
 
 	//пока возвращает только последнее сохраненное значение
-	for _,rep := range r.Reports {
+	for i,rep := range r.Reports {
 		if rep.RaportName == reportName {
-			return rep.LastSave
-			//for _,fn := range r.Reports[i]. {
-			//	if fn.Name == fullName {
-			//		return fn
-			//	}
-			//}
+			report = rep.LastSave
+			for _,fn := range r.Reports[i].FullName {
+				if fn.IsActive {
+					return fn
+				}
+			}
 		}
 	}
-	return FullName{}
+	return report
 }
 
+func ReadAllConfigs()*Root{
+	r := &Root{}
+	b,_ := ioutil.ReadFile(configAutocompleteDB)
+	xml.Unmarshal(b,r)
+	return r
+}
 
-func SaveLast(inputs []mainComponents.InputsComponent,reportName string){
+func SaveConfig(r *Root){
+	b,_ := xml.MarshalIndent(r,"","  ")
+	ioutil.WriteFile(configAutocompleteDB,b,0666)
+}
+
+func SaveLast(inputs []mainComponents.InputsComponent,reportName,fullName string){
 
 	r := &Root{}
 	b,_ := ioutil.ReadFile(configAutocompleteDB)
@@ -61,11 +75,20 @@ func SaveLast(inputs []mainComponents.InputsComponent,reportName string){
 
 
 	var isNewReport = true
+	var isNewFull = true
 
 	for i,rep := range r.Reports{
 		if rep.RaportName == reportName{
 			isNewReport = false
-			r.Reports[i].LastSave = newReport(inputs)
+			r.Reports[i].LastSave = newReport(inputs,"lastSave")
+
+			for i,name := range r.Reports[i].FullName {
+				if name.Name == fullName{
+					isNewFull = false
+					r.Reports[i].FullName[i] = newReport(inputs,fullName)
+				}
+			}
+
 			break
 		}
 	}
@@ -73,8 +96,21 @@ func SaveLast(inputs []mainComponents.InputsComponent,reportName string){
 	if isNewReport {
 		rep := Report{}
 		rep.RaportName = reportName
-		rep.LastSave = newReport(inputs)
+		rep.LastSave = newReport(inputs,"lastSave")
 		r.Reports = append(r.Reports,rep)
+	}
+
+	if isNewFull {
+
+		for i,rep := range r.Reports {
+			if rep.RaportName == reportName {
+				rep := FullName{}
+				rep.Name = reportName
+				rep = newReport(inputs,fullName)
+				r.Reports[i].FullName = append(r.Reports[i].FullName,rep)
+			}
+		}
+
 	}
 
 
@@ -82,9 +118,9 @@ func SaveLast(inputs []mainComponents.InputsComponent,reportName string){
 	ioutil.WriteFile(configAutocompleteDB,b,0666)
 }
 
-func newReport(inputs []mainComponents.InputsComponent)FullName{
+func newReport(inputs []mainComponents.InputsComponent,name string)FullName{
 	var rep FullName
-	rep.Name = "lastsave"
+	rep.Name = name
 	var usnms []Username
 
 	for _,field := range inputs {

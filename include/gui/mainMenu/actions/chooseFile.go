@@ -90,10 +90,15 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	var inputs []mainComponents.InputsComponent
 	document,err := docx.ReadDocxText(filePath)
 	if err != nil {
-		fmt.Println(err,"::: error in createNewEditArea")
+		widgets.QMessageBox_Information(nil, "Ошибка", "Выбран файл имеет тип отличный от .docx", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
 		return inputs
 	}
 	documentFields := document.GetFieldsNames()
+	fmt.Println(len(documentFields))
+	if len(documentFields) < 1 {
+		widgets.QMessageBox_Information(nil, "Ошибка", "Выбранный файл не подходит для формирования рапорта", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
+		return inputs
+	}
 	//layout для редактирования
 	editDocWidget := widgets.NewQWidget(nil, 0)
 	editVbox := widgets.NewQVBoxLayout()
@@ -118,6 +123,23 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	fp,_ := filepath.Abs(".")
 	filePath,_ = filepath.Rel(fp,filePath)
+	indexName := -1
+
+	/*
+	Возможно для отметки фамилии стоит вносить специальный
+	знак или их последовательность
+	а не делать это так
+	 */
+	for ind,n := range inputs{
+		if strings.Contains( n.InputName,"ФИО") && !strings.Contains(strings.ToLower(n.InputName),"нач") {
+			fds := strings.Fields( n.InputName)
+			for i,f := range fds{
+				if f == "ФИО" && len(fds)-1 > i && !strings.Contains(strings.ToLower(fds[i+1]),"нач"){
+					indexName = ind
+				}
+			}
+		}
+	}
 
 	fullname := autocomplete.ReadConfigFor(filePath,"")
 
@@ -327,7 +349,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 		document.ReplaceContent(simpleWords)
 		document.SaveFile(newDocPath)
-		autocomplete.SaveLast(inputs,filePath)
+		autocomplete.SaveLast(inputs,filePath,inputs[indexName].Input.CurrentText())
 	})
 
 
