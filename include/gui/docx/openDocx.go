@@ -178,14 +178,14 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 
 
 	paragraphs := d.FindWPcontent()
-	wordForReplace := input.Input.CurrentText()
+	startWord := input.Input.CurrentText()
 	//category,caseType,field,           shortForm,  input.Input.CurrentText()
 	//category,caseForm,fieldForReplace,replaceMode, wordForReplace
 	for _,p := range paragraphs {
 		paragraphText := ExtractTextFromContent(p.word)
 
 		if strings.Contains(paragraphText,tf.TemplateName){
-
+			wordForReplace := startWord
 
 			if !input.DateType.IsNil() {
 				filedsDate := strings.Fields(wordForReplace)
@@ -234,7 +234,46 @@ func prepareForReplace(tf jsonConfig.TemplateFields,wordForReplace string)string
 	wordForReplace = jsonConfig.GetNameWithCase(tf.Category,wordForReplace,tf.CaseType)
 	wordForReplace = jsonConfig.ChangeAbbreviation(wordForReplace,tf.ChangeShortForm)
 	wordForReplace = jsonConfig.ChangeLetterCase(wordForReplace,tf.ChangeLetterCase)
-	wordForReplace = PrepareSettings(wordForReplace)
+
+	/*
+	убрать афсо
+	 */
+	if tf.ShortMode == "4" && (strings.Index(wordForReplace,"Академии ФСО России") != -1) {
+		wordForReplace = wordForReplace[:strings.Index(wordForReplace,"Академии ФСО России")]
+		wordForReplace = strings.TrimRight(wordForReplace,spaceSeparator.SpaceSeparatorSymb)
+	}
+
+	/*
+		заменить схему размещения должности на 2 строки
+		или
+
+	*/
+	if tf.ShortMode == "5" && (strings.Index(wordForReplace,"-") != -1) {
+		wordForReplace = strings.Replace(wordForReplace,spaceSeparator.SpaceSeparatorSymb," ",-1)
+		wordForReplace = strings.Replace(wordForReplace,"- ","-"+spaceSeparator.SpaceSeparatorSymb,1)
+	} else if ind := strings.Index(strings.ToLower(wordForReplace),"заместит");
+		tf.ShortMode == "5" && ind != -1 && strings.Index(wordForReplace,"Академии ФСО России") != -1{
+
+		wordForReplace = strings.Replace(wordForReplace,spaceSeparator.SpaceSeparatorSymb," ",-1)
+		wordForReplace = strings.Replace(wordForReplace," "+"по",spaceSeparator.SpaceSeparatorSymb+"по",1)
+	}
+
+	if tf.ShortMode == "6"{
+		if (strings.Index(wordForReplace,"Академии ФСО России") != -1) {
+			wordForReplace = wordForReplace[:strings.Index(wordForReplace,"Академии ФСО России")]
+			wordForReplace = strings.TrimRight(wordForReplace,spaceSeparator.SpaceSeparatorSymb)
+		}
+
+		if strings.Index(wordForReplace,"- ") != -1 {
+			wordForReplace = strings.Replace(wordForReplace,spaceSeparator.SpaceSeparatorSymb," ",-1)
+			wordForReplace = strings.Replace(wordForReplace,"- ","-"+spaceSeparator.SpaceSeparatorSymb,1)
+		}
+
+
+	}
+
+
+	//wordForReplace = PrepareSettings(wordForReplace)
 	return wordForReplace
 }
 

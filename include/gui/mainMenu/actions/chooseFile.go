@@ -3,6 +3,7 @@ package actions
 import (
 	"fmt"
 	"github.com/docxReporter2/include/gui/autocomplete"
+	"github.com/docxReporter2/include/gui/dateConvert"
 	"github.com/docxReporter2/include/gui/docx"
 	"github.com/docxReporter2/include/gui/jsonConfig"
 	"github.com/docxReporter2/include/gui/mainComponents"
@@ -90,7 +91,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	var inputs []mainComponents.InputsComponent
 	document,err := docx.ReadDocxText(filePath)
 	if err != nil {
-		widgets.QMessageBox_Information(nil, "Ошибка", "Выбран файл имеет тип отличный от .docx", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
+		widgets.QMessageBox_Information(nil, "Ошибка", "Выбранный файл имеет тип отличный от .docx", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
 		return inputs
 	}
 	documentFields := document.GetFieldsNames()
@@ -575,18 +576,22 @@ func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.Inp
 	wordForReplace := inputText.Input.CurrentText()
 	if tf.Category == jsonConfig.DateCategoryName {
 		if !inputText.DateType.IsNil() {
-			filedsDate := strings.Fields(wordForReplace)
-			if len(filedsDate) == 3 {
-				wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
-				if inputText.DateType.WithoutDate.IsChecked(){
-					wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
-				}
-				//вообще тут вопрос как представлять это
-				//например "2021" или "_______________ 2021"
-				if inputText.DateType.WithoutDateAndMounth.IsChecked(){
-					wordForReplace =  strings.Fields(wordForReplace)[2]
-				}
-			}
+
+			wordForReplace = dateConvert.PrepareDate(wordForReplace,tf.ChangeShortForm,inputText)
+
+			//filedsDate := strings.Fields(wordForReplace)
+			//if len(filedsDate) == 3 {
+			//	wordForReplace =  strings.Fields(wordForReplace)[0]+" "+jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+			//	if inputText.DateType.WithoutDate.IsChecked(){
+			//		wordForReplace =  jsonConfig.GetCaseMonth(strings.Fields(wordForReplace)[1],tf.CaseType)+" "+strings.Fields(wordForReplace)[2]
+			//	}
+			//	//вообще тут вопрос как представлять это
+			//	//например "2021" или "_______________ 2021"
+			//	if inputText.DateType.WithoutDateAndMounth.IsChecked(){
+			//		wordForReplace =  strings.Fields(wordForReplace)[2]
+			//	}
+			//}
+
 		}
 		return wordForReplace
 	}

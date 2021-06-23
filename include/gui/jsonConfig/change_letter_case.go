@@ -250,6 +250,8 @@ func GetCaseMonth(monthN,caseM string)string{
 			return "ноябре"
 		case "декабре":
 			return "декабря"
+		default:
+			return monthN
 		}
 	}
 	return monthN
