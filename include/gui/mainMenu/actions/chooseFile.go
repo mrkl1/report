@@ -57,6 +57,10 @@ func ChoseFileForReport(ac *mainComponents.AppComponents) {
 //с областью предосмотра и областью
 //редактирования
 func createDocumentForm(ac *mainComponents.AppComponents,filepath string){
+
+	//убирается текущее активное имя для рапорта
+	ac.ReportName = ""
+
 	//создание области для редактирования
 	//используется именно этот вид layout т.к.
 	//только при нем нормально создается область которая
@@ -112,6 +116,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 	previewButton.SetFixedHeight(25)
 
 	ac.MainWindow.SetWindowTitle("reporter: "+filepath.Base(filePath))
+	ac.ReportName = filePath
 	scrollArea := widgets.NewQScrollArea(nil)
 
 	//panel,chbxs := jsonConfig.CreateSetPane()
@@ -244,7 +249,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 		document.ReplaceContent(simpleWords)
 		document.SaveFile(newDocPath)
-
+		document.Close()
 	//TODO
 	// -заблокировать кнопки
 		ans := make(chan bool,1)
@@ -350,7 +355,11 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 		document.ReplaceContent(simpleWords)
 		document.SaveFile(newDocPath)
-		autocomplete.SaveLast(inputs,filePath,inputs[indexName].Input.CurrentText())
+		document.Close()
+		if indexName != -1  {
+			autocomplete.SaveLast(inputs,filePath,inputs[indexName].Input.CurrentText())
+		}
+
 	})
 
 

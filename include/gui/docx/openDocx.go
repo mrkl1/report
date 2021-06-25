@@ -10,6 +10,7 @@ import (
 	"github.com/docxReporter2/include/gui/spaceSeparator"
 	"io"
 	"io/ioutil"
+	"log"
 	"os"
 	"strings"
 )
@@ -186,7 +187,7 @@ func (d *DocxDoc)ReplaceWPfield(tf jsonConfig.TemplateFields,input mainComponent
 
 		if strings.Contains(paragraphText,tf.TemplateName){
 			wordForReplace := startWord
-
+			log.Println(wordForReplace)
 			if !input.DateType.IsNil() {
 				filedsDate := strings.Fields(wordForReplace)
 				if len(filedsDate) == 3 {

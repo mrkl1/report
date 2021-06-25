@@ -9,6 +9,7 @@ type AppComponents struct {
 	MainWindow  *widgets.QMainWindow
 	Inputs      []InputsComponent
 	IsConvProcess bool
+	ReportName string
 	//QComboBox   widgets.QComboBox
 	//ConvertingInfo *widgets.QLabel
 }

@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"github.com/docxReporter2/include/gui/mainComponents"
 	"io/ioutil"
+	"log"
 	"path/filepath"
 )
 
@@ -38,9 +39,16 @@ type Username struct {
 func ReadConfigFor(reportName,fullName string)FullName{
 	r := &Root{}
 	report := FullName{}
-	b,_ := ioutil.ReadFile(configAutocompleteDB)
-	xml.Unmarshal(b,r)
-
+	b,err := ioutil.ReadFile(configAutocompleteDB)
+	if err != nil {
+		log.Println("ReadConfigFor",err)
+		return FullName{}
+	}
+	err = xml.Unmarshal(b,r)
+	if err != nil {
+		log.Println("ReadConfigFor Unmarshal",err)
+		return FullName{}
+	}
 	//пока возвращает только последнее сохраненное значение
 	for i,rep := range r.Reports {
 		if rep.RaportName == reportName {
@@ -64,15 +72,21 @@ func ReadAllConfigs()*Root{
 
 func SaveConfig(r *Root){
 	b,_ := xml.MarshalIndent(r,"","  ")
-	ioutil.WriteFile(configAutocompleteDB,b,0666)
+	err := ioutil.WriteFile(configAutocompleteDB,b,0666)
+	if err != nil {
+		log.Println("SAVE config err:",err)
+	}
 }
 
 func SaveLast(inputs []mainComponents.InputsComponent,reportName,fullName string){
 
 	r := &Root{}
 	b,_ := ioutil.ReadFile(configAutocompleteDB)
-	xml.Unmarshal(b,r)
-
+	err := xml.Unmarshal(b,r)
+	if err != nil {
+		log.Println("xml.Unmarshal err:",err)
+		return
+	}
 
 	var isNewReport = true
 	var isNewFull = true
@@ -82,10 +96,10 @@ func SaveLast(inputs []mainComponents.InputsComponent,reportName,fullName string
 			isNewReport = false
 			r.Reports[i].LastSave = newReport(inputs,"lastSave")
 
-			for i,name := range r.Reports[i].FullName {
+			for j,name := range r.Reports[i].FullName {
 				if name.Name == fullName{
 					isNewFull = false
-					r.Reports[i].FullName[i] = newReport(inputs,fullName)
+					r.Reports[i].FullName[j] = newReport(inputs,fullName)
 				}
 			}
 
