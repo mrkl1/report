@@ -16,7 +16,7 @@ func init(){
 	}
 }
 
-func PrepareDate(wordForReplace,mode string,inputText mainComponents.InputsComponent)string{
+func PrepareDate(wordForReplace,mode string,inputText mainComponents.InputsComponent,caseT string)string{
 	//подробности в документации
 	separator := " "
 	if mode == "2" {
@@ -27,10 +27,11 @@ func PrepareDate(wordForReplace,mode string,inputText mainComponents.InputsCompo
 
 		filedsDate := strings.Split(wordForReplace,separator)
 		if len(filedsDate) == 3 {
-			wordForReplace =  strings.Split(wordForReplace,separator)[0]+separator+jsonConfig.GetCaseMonth(strings.Split(wordForReplace,separator)[1],mode)+separator+strings.Split(wordForReplace,separator)[2]
+			wordForReplace =  strings.Split(wordForReplace,separator)[0]+separator+jsonConfig.GetCaseMonth(strings.Split(wordForReplace,separator)[1],caseT)+separator+strings.Split(wordForReplace,separator)[2]
 			if inputText.DateType.WithoutDate.IsChecked(){
 
-				wordForReplace =  separator+jsonConfig.GetCaseMonth(strings.Split(wordForReplace,separator)[1],mode)+separator+strings.Split(wordForReplace,separator)[2]
+				wordForReplace =  separator+jsonConfig.GetCaseMonth(strings.Split(wordForReplace,separator)[1],caseT)+separator+strings.Split(wordForReplace,separator)[2]
+
 			}
 			//вообще тут вопрос как представлять это
 			//например "2021" или "_______________ 2021"

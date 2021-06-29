@@ -175,7 +175,11 @@ func ChangeLetterCase(word,flag string)string{
 		return FirstToUpper(word)
 	}
 
+	if flag == "1"{
 		return FirstToLower(word)
+	}
+
+	return word
 }
 
 
@@ -238,8 +242,8 @@ func GetCaseMonth(monthN,caseM string)string{
 			return "мае"
 		case "июня":
 			return "июне"
-		case "июле":
-			return "июля"
+		case "июля":
+			return "июле"
 		case "августа":
 			return "августе"
 		case "сентября":
@@ -248,8 +252,8 @@ func GetCaseMonth(monthN,caseM string)string{
 			return "октябре"
 		case "ноября":
 			return "ноябре"
-		case "декабре":
-			return "декабря"
+		case "декабря":
+			return "декабре"
 		default:
 			return monthN
 		}

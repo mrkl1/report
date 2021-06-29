@@ -586,7 +586,7 @@ func changeSimpleWords(tf jsonConfig.TemplateFields,inputText mainComponents.Inp
 	if tf.Category == jsonConfig.DateCategoryName {
 		if !inputText.DateType.IsNil() {
 
-			wordForReplace = dateConvert.PrepareDate(wordForReplace,tf.ChangeShortForm,inputText)
+			wordForReplace = dateConvert.PrepareDate(wordForReplace,tf.ChangeShortForm,inputText,tf.CaseType)
 
 			//filedsDate := strings.Fields(wordForReplace)
 			//if len(filedsDate) == 3 {

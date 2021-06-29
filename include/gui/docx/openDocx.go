@@ -269,8 +269,6 @@ func prepareForReplace(tf jsonConfig.TemplateFields,wordForReplace string)string
 			wordForReplace = strings.Replace(wordForReplace,spaceSeparator.SpaceSeparatorSymb," ",-1)
 			wordForReplace = strings.Replace(wordForReplace,"- ","-"+spaceSeparator.SpaceSeparatorSymb,1)
 		}
-
-
 	}
 
 
