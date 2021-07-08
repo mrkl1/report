@@ -151,7 +151,7 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 
 	for _,inp := range inputs {
 		for _,n:= range fullname.Usernames {
-			if inp.InputName == n.FieldName {
+			if inp.InputName == n.FieldName && !inp.IsDate {
 				inp.Input.SetCurrentText(n.Value)
 			}
 		}

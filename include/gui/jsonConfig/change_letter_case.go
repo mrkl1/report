@@ -178,7 +178,7 @@ func ChangeLetterCase(word,flag string)string{
 	if flag == "1"{
 		return FirstToLower(word)
 	}
-
+	fmt.Println("word",word,flag)
 	return word
 }
 
