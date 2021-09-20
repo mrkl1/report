@@ -319,7 +319,6 @@ func (d *DocxDoc)ReplaceContent(words []string){
 	allTagsIndexes := d.findWTcontent()
 	//ищем текст с {
 	HashIndexes := d.findBrackets(allTagsIndexes)
-
 	//получаем все теги для замены
 	tagsForReplace := getWTBetween(allTagsIndexes,HashIndexes)
 	//заменяем текст
@@ -513,16 +512,14 @@ func (d *DocxDoc)findWTcontent() []wordInd {
 		curTag := text[indexOpen : indexOpen+5]
 		// проверка на открывающий тег (узнаем тот ли это тег или просто похожий на него)
 		if checkTag(curTag) {
-			//позиция для >
+			//кол-во символов до '>'
 			tagEnd := strings.Index(text[indexOpen:], closeSymbol)
 			//начало текста
 			start := startIndex + indexOpen + tagEnd + 1
 			w := newW(text[indexOpen+tagEnd+1 : indexClose],start,indexClose + startIndex)
 			word := w.word
 			//отделение символов {} от остального текста
-			var ws []wordInd
-
-
+			var ws []wordInd //word slice
 
 			for i := 0; i < len(word); {
 				indO := strings.Index(word[i:],"{")
@@ -555,8 +552,7 @@ func (d *DocxDoc)findWTcontent() []wordInd {
 				if indO > indC && (indC == -1) {
 
 					ws = append(ws,newW("{",start+indO+i,start+indO+i+1))
-
-					ws = append(ws,newW(word[i:i+indO],start+indO-i,start+indO))
+					//ws = append(ws,newW(word[i:i+indO],start+indO-i,start+indO))
 					i += indO + 1
 					continue
 				}
