@@ -551,11 +551,12 @@ func (d *DocxDoc)findWTcontent() []wordInd {
 					i += indC + 1
 					continue
 				}
+
 				if indO > indC && (indC == -1) {
 
 					ws = append(ws,newW("{",start+indO+i,start+indO+i+1))
 
-					ws = append(ws,newW(word[i:indO],start+indO-i,start+indO))
+					ws = append(ws,newW(word[i:i+indO],start+indO-i,start+indO))
 					i += indO + 1
 					continue
 				}

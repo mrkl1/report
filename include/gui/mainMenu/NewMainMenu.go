@@ -173,7 +173,7 @@ func createChooseReportWindow(ac *mainComponents.AppComponents)(*widgets.QWidget
 				for j,i:= range inp{
 					for _,us := range fn.Usernames {
 
-						if us.FieldName == i.InputName{
+						if us.FieldName == i.InputName && !i.IsDate{
 							ac.Inputs[j].Input.SetCurrentText(us.Value)
 						}
 					}
