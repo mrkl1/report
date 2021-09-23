@@ -154,20 +154,31 @@ func checkTag(tag string) bool {
 
 //GetFieldsNames возвращает имена полей, которые заключены
 //в {}
-func (d *DocxDoc) GetFieldsNames() []string {
+func (d *DocxDoc) GetFieldsNames() ([]string,error) {
 	return d.extractTextFromSymbols()
 }
 
-func (d *DocxDoc)extractTextFromSymbols() []string {
+func (d *DocxDoc)extractTextFromSymbols() ([]string,error) {
 	text := d.ExtractTextFromContent()
 	var fields []string
+
+	//TODO
+	// для начала пусть будет такой вариант, который
+	// проверяет, что кол-во откр./закр. скобок совпадает
+	// потом можно будет доделать, чтобы открывающая шла после закрывающей
+
+	if  strings.Count(text,"{") != strings.Count(text,"}"){
+		return nil,errors.New("brackets error")
+	}
 	for {
 		indexOpen := strings.Index(text, "{")
 		indexClose := strings.Index(text, "}")
 		//выход из цикла когда нет индексов больше в тексте
 		if indexOpen < 0 || indexClose < 0 {
-			return fields
+			return fields,nil
 		}
+		
+
 		//извлекаем текст из скобок и заносим в слайс
 		fields = append(fields, text[indexOpen+1:indexClose])
 		text = text[indexClose+1:]

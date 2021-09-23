@@ -11,6 +11,7 @@ import (
 	"github.com/therecipe/qt/core"
 	"github.com/therecipe/qt/gui"
 	"github.com/therecipe/qt/widgets"
+
 	"path/filepath"
 	"strings"
 )
@@ -26,6 +27,8 @@ const (
 	previewText = "Предосмотр рапорта"
 	saveText    = "Сохранить отчет"
 )
+
+
 
 
 var (
@@ -98,8 +101,13 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		widgets.QMessageBox_Information(nil, "Ошибка", "Выбранный файл имеет тип отличный от .docx", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
 		return inputs
 	}
-	documentFields := document.GetFieldsNames()
-	fmt.Println(len(documentFields))
+	documentFields,err := document.GetFieldsNames()
+	if err != nil {
+		widgets.QMessageBox_Information(nil, "Ошибка", "Допущена ошибка в шаблоне, невозможно использовать файл для создания отчета", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
+		saveToLog(filePath,err)
+		return inputs
+	}
+
 	if len(documentFields) < 1 {
 		widgets.QMessageBox_Information(nil, "Ошибка", "Выбранный файл не подходит для формирования рапорта", widgets.QMessageBox__Ok, widgets.QMessageBox__Ok)
 		return inputs
@@ -223,7 +231,11 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		}
 
 		var simpleWords []string
-		for _,field := range document.GetFieldsNames(){
+
+
+		fieldsNames,_ := document.GetFieldsNames()
+
+		for _,field := range fieldsNames{
 			tf := jsonConfig.NewTemplateFields(field)
 			/*
 				Логика работа такая, сначала заменяются поля, которые
@@ -331,7 +343,9 @@ func createNewEditArea(filePath string,ac *mainComponents.AppComponents)[]mainCo
 		*/
 
 		var simpleWords []string
-		for _,field := range document.GetFieldsNames(){
+		fieldsNames,_ := document.GetFieldsNames()
+
+		for _,field := range fieldsNames{
 			tf := jsonConfig.NewTemplateFields(field)
 			/*
 			Логика работа такая, сначала заменяются поля, которые
